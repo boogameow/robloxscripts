@@ -4,7 +4,7 @@ local ps = game:GetService("Players")
 	local selfdata = pl:WaitForChild("TempPlayerStatsModule")
 
 local ts = game:GetService("TweenService")
-	local info = TweenInfo.new(.3, Enum.EasingStyle.Linear)
+	local info = TweenInfo.new(.2, Enum.EasingStyle.Linear)
 
 local rep = game:GetService("ReplicatedStorage")
 	local beast
@@ -12,6 +12,7 @@ local rep = game:GetService("ReplicatedStorage")
 
 
 local inchase = false
+local escaped = false
 local rescuedb = false
 local ongen = false
 local orig = 0
@@ -23,7 +24,7 @@ local endchasetime = 6
 
 -- SURVIVOR:
 -- objective
-local computerbp = 8
+local computerbp = 9
 local opengatebp = 1500
 
 -- survival
@@ -64,16 +65,16 @@ local gui = Instance.new("ScreenGui", pl.PlayerGui)
 	gui.ResetOnSpawn = false
 
 local version = Instance.new("TextLabel", gui)
-	version.AnchorPoint = Vector2.new(1, 1)
+	version.AnchorPoint = Vector2.new(0, 1)
 	version.BackgroundTransparency = 1
 	version.BorderSizePixel = 0
-	version.Position = UDim2.new(1, 0, 1, 0)
+	version.Position = UDim2.new(0, 0, 1, 0)
 	version.Size = UDim2.new(0.2, 0, 0.02, 0)
 	version.Font = Enum.Font.GothamSemibold
 	version.Text = "Failed to load Script. (Press F9)"
 	version.TextColor3 = Color3.fromRGB(255, 0, 0)
 	version.TextScaled = true
-	version.TextXAlignment = Enum.TextXAlignment.Right
+	version.TextXAlignment = Enum.TextXAlignment.Left
 	version.TextYAlignment = Enum.TextYAlignment.Bottom
 	version.ZIndex = 10
 
@@ -83,7 +84,7 @@ local chasemusic = Instance.new("Sound", gui)
 	chasemusic.Playing = true
 	chasemusic.SoundId = musics[math.random(1, #musics)]
 
-local g1 = {Volume = 1.25}
+local g1 = {Volume = .8}
 local g2 = {Volume = 0}
 local intw = ts:Create(chasemusic, TweenInfo.new(1, Enum.EasingStyle.Linear), g1)
 local outtw = ts:Create(chasemusic, TweenInfo.new(2, Enum.EasingStyle.Linear), g2)
@@ -241,6 +242,8 @@ local function add(points, cat, action)
 	local points = math.clamp(points, 0, 8000)
 	points = math.floor(points)
 
+	if points <= 0 then return end
+
 	local cl = award:Clone()
 		cl.Category.Image = ids[cat]
 		cl.Action.Text = action
@@ -268,56 +271,52 @@ local function add(points, cat, action)
 	
 	table.insert(queue, #queue + 1, cl)
 	local index = table.find(queue, cl)
-	
-	if #queue > 1 then
-		
-		if #queue > 2 then
-			gone = queue[1]
-			fade = queue[2]
-			
-			gone:Destroy()
-			table.remove(queue, 1)
-		else
-			fade = queue[1]
-		end
+	local del
 
-		fade.Position = UDim2.new(0.02, 0, 0.58, 0)
-		fade.Size = UDim2.new(0.04, 0, 0.04, 0)
-		fade.ImageTransparency = 0.5
-		fade.Category.ImageTransparency = 0.5
-		fade.Action.TextTransparency = 0.5
-		fade.BP.TextTransparency = 0.5
-		
-		cl.Parent = gui
-		tween(cl, 0)
-		
-		
-		delay(5, function()
-			if cl and cl.Parent then
-				tween(cl, 1)
-				
-				wait(.3)
-				cl:Destroy()
-				table.remove(queue, table.find(queue, cl))
-			end
-		end)
-		
-	else
-		
-		cl.Parent = gui
-		tween(cl, 0)
-		
-		delay(5, function()
-			if cl and cl.Parent then
-				tween(cl, 1)
-				
-				wait(.3)
-				cl:Destroy()
-				table.remove(queue, table.find(queue, cl))
-			end
-		end)
-		
+	for i, v in pairs(queue) do
+		if i == index then
+			cl.Parent = gui 
+
+			tween(cl, 0)
+		elseif i == (index - 1) then
+			local g = {
+				Position = UDim2.new(0.02, 0, 0.58, 0),
+				Size = UDim2.new(0.04, 0, 0.04, 0),
+				ImageTransparency = 0.5
+			}
+
+			ts:Create(v, info, g):Play()
+
+			local g = {ImageTransparency = 0.5}
+			ts:Create(v.Category, info, g):Play()
+
+			local g = {TextTransparency = 0.5}
+			ts:Create(v.Action, info, g):Play()
+			ts:Create(v.BP, info, g):Play()
+		elseif i == (index - 2) then
+			local g = {Position = UDim2.new(0.02, 0, 0.65, 0)}
+			ts:Create(v, info, g):Play()
+		elseif i == (index - 3) then
+			v:Destroy()
+			del = i
+		end
 	end
+
+	if del then
+		table.remove(queue, del)
+	end
+
+	delay(3, function()
+		local new = table.find(queue, cl)
+
+		if new then
+			table.remove(queue, new)
+			tween(cl, 1)
+
+			game.Debris:AddItem(cl, .3)
+		end
+	end)
+	
 end
 
 run.Heartbeat:Connect(function()
@@ -383,6 +382,7 @@ active.Changed:Connect(function()
 			bloodpoints[i] = 0
 		end
 
+		escaped = false
 		chasemusic.SoundId = musics[math.random(1, #musics)]
 
 		if beast.Name ~= pl.Name then
@@ -440,7 +440,8 @@ end
 
 
 selfdata.Escaped.Changed:Connect(function()
-	if selfdata.Escaped.Value == true and selfdata.Captured.Value == false then
+	if selfdata.Escaped.Value == true and selfdata.Captured.Value == false and escaped == false then
+		escaped = true
 		add(survivedbp, "Survival", "ESCAPED")
 	end
 end)
@@ -479,7 +480,7 @@ selfdata.ActionEvent.Changed:Connect(function()
 end)
 
 selfdata.ActionProgress.Changed:Connect(function()
-	if selfdata.ActionProgress.Value >= 99 and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ExitDoor" then
+	if selfdata.ActionProgress.Value >= 0.99 and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ExitDoor" then
 		add(opengatebp, "Objective", "OPEN GATE")
 	elseif selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent and selfdata.ActionEvent.Value.Parent.Parent.Name == "ComputerTable" then
 		genprog = genprog + (selfdata.ActionProgress.Value - orig * 100)
@@ -487,30 +488,41 @@ selfdata.ActionProgress.Changed:Connect(function()
 end)
 
 selfdata.ActionInput.Changed:Connect(function()
-	if selfdata.ActionInput.Value == true and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "FreezePod" and beast.Name ~= pl.Name and rescuedb == false then
+	if selfdata.ActionInput.Value == true and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "FreezePod" and beast.Name ~= pl.Name then
 		local user = selfdata.ActionEvent.Value.Parent.CapturedTorso
 
-		if user.Value ~= nil and rescuedb == false then
+		if user.Value ~= nil then
 			user = ps:GetPlayerFromCharacter(user.Value.Parent)
 
-			if user and user.TempPlayerStatsModule.Captured.Value == true and rescuedb == false then
-				rescuedb = true
-				add(rescuebp, "Altruism", "RESCUE")
+			if user and user.TempPlayerStatsModule.Captured.Value == true and con == nil then
 
-				delay(3, function()
-					rescuedb = false
-				end)
+				con = user.TempPlayerStatsModule.Captured.Changed:Connect(function()
+					if user.TempPlayerStatsModule.Captured.Value == false then
+						con:Disconnect()
+						con = nil
 
-				delay(10, function()
-					if user.TempPlayerStatsModule.Captured.Value == false and user.TempPlayerStatsModule.Ragdoll.Value == false then
-						add(saferescuebp, "Altruism", "SAFE RESCUE")
+						add(rescuebp, "Altruism", "RESCUE")
+
+						delay(10, function()
+							if user.TempPlayerStatsModule.Captured.Value == false and user.TempPlayerStatsModule.Ragdoll.Value == false then
+								add(saferescuebp, "Altruism", "SAFE RESCUE")
+							end
+						end)
 					end
 				end)
+
+				delay(2, function()
+					if con then
+						con:Disconnect()
+						con = nil
+					end
+				end)
+
 			end
 		end
 	end
 end)
 
 
-version.Text = "DBD in FTF V1.17"
+version.Text = "DBD in FTF v16"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
