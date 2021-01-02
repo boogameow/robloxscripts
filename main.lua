@@ -494,4 +494,4 @@ selfdata.ActionInput.Changed:Connect(function()
 	end
 end)
 
-print("Successfully loaded DBD script. (V1.14)")
+print("Successfully loaded DBD script. (V1.15)")
