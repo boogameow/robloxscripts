@@ -512,4 +512,4 @@ end)
 
 
 version.Text = "DBD in FTF V1.16"
-version.TextColor3 = Color3.fromRGB(212, 212, 212)
+version.TextColor3 = Color3.fromRGB(100, 100, 100)
