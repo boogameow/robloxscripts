@@ -23,7 +23,7 @@ local endchasetime = 6
 
 -- SURVIVOR:
 -- objective
-local computerbp = 11 -- awarded per % of gen
+local computerbp = 8
 local opengatebp = 1500
 
 -- survival
