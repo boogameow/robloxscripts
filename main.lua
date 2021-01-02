@@ -75,6 +75,7 @@ local version = Instance.new("TextLabel", gui)
 	version.TextScaled = true
 	version.TextXAlignment = Enum.TextXAlignment.Right
 	version.TextYAlignment = Enum.TextYAlignment.Bottom
+	version.ZIndex = 10
 
 local chasemusic = Instance.new("Sound", gui)
 	chasemusic.Volume = 0
