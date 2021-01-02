@@ -422,7 +422,10 @@ ps.PlayerRemoving:Connect(function(pl)
 			add(bp, "Boldness", "CHASE")
 		end
 
-		add(survivedbp, "Survival", "ESCAPED")
+		if escaped == false then
+			escaped = true
+			add(survivedbp, "Survival", "ESCAPED")
+		end
 	end
 end)
 
@@ -529,5 +532,5 @@ selfdata.ActionInput.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v18"
+version.Text = "DBD in FTF v19"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
