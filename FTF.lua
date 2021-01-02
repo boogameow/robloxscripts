@@ -372,16 +372,21 @@ end)
 
 active.Changed:Connect(function()
 	if active.Value == false then
-		container.Visible = true
-
-		delay(45, function()
-			container.Visible = false
-		end)
-	else 
 		for i, v in pairs(bloodpoints) do
 			bloodpoints[i] = 0
 		end
 
+		container.Visible = true
+
+		delay(45, function()
+			container.Visible = false
+
+			for i, v in pairs(bloodpoints) do
+				posts[i].Grad.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+				posts[i].Amount.Text = "+0"
+			end
+		end)
+	else 
 		escaped = false
 		chasemusic.SoundId = musics[math.random(1, #musics)]
 
