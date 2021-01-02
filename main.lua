@@ -63,6 +63,19 @@ local gui = Instance.new("ScreenGui", pl.PlayerGui)
 	gui.Name = "DBD"
 	gui.ResetOnSpawn = false
 
+local version = Instance.new("TextLabel", gui)
+	version.AnchorPoint = Vector2.new(1, 1)
+	version.BackgroundTransparency = 1
+	version.BorderSizePixel = 0
+	version.Position = UDim2.new(1, 0, 1, 0)
+	version.Size = UDim2.new(0.15, 0, 0.02, 0)
+	version.Font = Enum.Font.Gotham
+	version.Text = "Failed to load Script."
+	version.TextColor3 = Color3.fromRGB(255, 0, 0)
+	version.TextScaled = true
+	version.TextXAlignment = Enum.TextXAlignment.Right
+	version.TextYAlignment = Enum.TextYAlignment.Bottom
+
 local chasemusic = Instance.new("Sound", gui)
 	chasemusic.Volume = 0
 	chasemusic.Looped = true
@@ -497,4 +510,6 @@ selfdata.ActionInput.Changed:Connect(function()
 	end
 end)
 
-print("Successfully loaded DBD script. (V1.15)")
+
+version.Text = "DBD in FTF V1.16"
+version.TextColor3 = Color3.fromRGB(212, 212, 212)
