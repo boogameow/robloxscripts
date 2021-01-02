@@ -487,4 +487,4 @@ selfdata.ActionInput.Changed:Connect(function()
 	end
 end)
 
-print("loaded ftf script.")
+print("loaded ftf script. (V1.1)")
