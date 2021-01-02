@@ -512,5 +512,5 @@ selfdata.ActionInput.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF V1.16"
+version.Text = "DBD in FTF V1.17"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
