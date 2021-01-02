@@ -458,7 +458,7 @@ selfdata.Ragdoll.Changed:Connect(function()
 				if v.Name ~= pl.Name and v.Name ~= beast.Name and v.Character.Parent and awarded == false then
 					local mag = (pl.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
 
-					if mag < 8 then
+					if mag < 10 then
 						awarded = true
 						add(protectionbp, "Altruism", "PROTECTION")
 					end
