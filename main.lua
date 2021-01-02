@@ -480,6 +480,10 @@ selfdata.ActionInput.Changed:Connect(function()
 				rescuedb = true
 				add(rescuebp, "Altruism", "RESCUE")
 
+				delay(3, function()
+					rescuedb = false
+				end)
+
 				delay(10, function()
 					if user.TempPlayerStatsModule.Captured.Value == false and user.TempPlayerStatsModule.Ragdoll.Value == false then
 						add(saferescuebp, "Altruism", "SAFE RESCUE")
