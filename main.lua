@@ -85,8 +85,8 @@ local chasemusic = Instance.new("Sound", gui)
 
 local g1 = {Volume = 1.25}
 local g2 = {Volume = 0}
-local intw = ts:Create(chasemusic, TweenInfo.new(.75, Enum.EasingStyle.Linear), g1)
-local outtw = ts:Create(chasemusic, TweenInfo.new(1.5, Enum.EasingStyle.Linear), g2)
+local intw = ts:Create(chasemusic, TweenInfo.new(1, Enum.EasingStyle.Linear), g1)
+local outtw = ts:Create(chasemusic, TweenInfo.new(2, Enum.EasingStyle.Linear), g2)
 
 -- in-game awards
 local award = Instance.new("ImageLabel")
