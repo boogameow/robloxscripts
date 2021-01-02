@@ -24,7 +24,7 @@ local endchasetime = 6
 
 -- SURVIVOR:
 -- objective
-local computerbp = 9
+local computerbp = 10
 local opengatebp = 1500
 
 -- survival
@@ -524,5 +524,5 @@ selfdata.ActionInput.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v16"
+version.Text = "DBD in FTF v17"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
