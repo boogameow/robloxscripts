@@ -14,7 +14,7 @@ local rep = game:GetService("ReplicatedStorage")
 local inchase = false
 local ongen = false
 local startchase = 0
-local gentick = 0
+local genprog = 0
 local chasetick = 0
 local endchasetime = 6
 
@@ -398,7 +398,7 @@ ps.PlayerRemoving:Connect(function(pl)
 			add(bp, "Boldness", "CHASE")
 		end
 
-		add(survivedbp, "Survival", "DISCONNECTION")
+		add(survivedbp, "Survival", "BEAST DISCONENCT")
 	end
 end)
 
@@ -450,18 +450,20 @@ end)
 
 selfdata.ActionEvent.Changed:Connect(function()
 	if selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ComputerTable" and beast.Name ~= pl.Name then
-		gentick = tick()
+		genprog = 0
 		ongen = true
 	elseif ongen == true and selfdata.ActionEvent.Value == nil and beast.Name ~= pl.Name then
 		ongen = false
-		local bp = (tick() - gentick) * computerbp
-		add(bp, "Objective", "REPAIR")
+		add(genprog * computerbp, "Objective", "REPAIR")
+		genprog = 0
 	end
 end)
 
 selfdata.ActionProgress.Changed:Connect(function()
-	if selfdata.ActionProgress.Value >= 100 and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ExitDoor" then
+	if selfdata.ActionProgress.Value >= 99 and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ExitDoor" then
 		add(opengatebp, "Objective", "OPEN GATE")
+	elseif selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ComputerTable" then
+		genprog = genprog + 1
 	end 
 end)
 
