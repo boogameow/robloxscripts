@@ -318,7 +318,7 @@ run.Heartbeat:Connect(function()
 		if cast then
 			chasetick = tick()
 		else 
-			if tick() - chasetick > endchasetime or selfdata.Captured.Value == true or selfdata.Ragdoll.Value == true or selfdata.Escaped.Value == true and selfdata.Health.Value <= 0 and and pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
+			if tick() - chasetick > endchasetime or selfdata.Captured.Value == true or selfdata.Ragdoll.Value == true or selfdata.Escaped.Value == true and selfdata.Health.Value <= 0 or pl.Character.Humanoid.MoveDirection == Vector3.new(0, 0, 0) then
 				inchase = false
 				outtw:Play()
 
