@@ -22,20 +22,20 @@ local endchasetime = 6
 -- SURVIVOR:
 -- objective
 local computerbp = 25 -- awarded per second of gen
-local opengatebp = 1500
+local opengatebp = 1250
 
 -- survival
 local graspescapebp = 1000 -- awarded for escaping the killer
-local survivedbp = 5000 -- awarded for surviving
+local survivedbp = 4000 -- awarded for surviving
 
 -- boldness
-local chasebp = 70 -- earned bp per second
-local escapedchasebp = 400 -- bonus for winning a chase
+local chasebp = 60 -- earned bp per second
+local escapedchasebp = 300 -- bonus for winning a chase
 
 -- altruism 
-local rescuebp = 950
-local saferescuebp = 500
-local protectionbp = 750
+local rescuebp = 750
+local saferescuebp = 250
+local protectionbp = 500
 
 
 local gone, fade
