@@ -480,7 +480,7 @@ selfdata.ActionEvent.Changed:Connect(function()
 end)
 
 selfdata.ActionProgress.Changed:Connect(function()
-	if selfdata.ActionProgress.Value >= 0.99 and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ExitDoor" then
+	if selfdata.ActionProgress.Value >= 1 and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ExitDoor" then
 		add(opengatebp, "Objective", "OPEN GATE")
 	elseif selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent and selfdata.ActionEvent.Value.Parent.Parent.Name == "ComputerTable" then
 		genprog = genprog + (selfdata.ActionProgress.Value - orig * 100)
