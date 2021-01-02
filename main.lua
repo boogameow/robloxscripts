@@ -21,7 +21,7 @@ local endchasetime = 6
 
 -- SURVIVOR:
 -- objective
-local computerbp = 20 -- awarded per second of gen
+local computerbp = 25 -- awarded per second of gen
 local opengatebp = 1500
 
 -- survival
@@ -449,10 +449,10 @@ selfdata.Ragdoll.Changed:Connect(function()
 end)
 
 selfdata.ActionEvent.Changed:Connect(function()
-	if selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ComputerTable" then
+	if selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ComputerTable" and beast.Name ~= pl.Name then
 		gentick = tick()
 		ongen = true
-	elseif ongen == true and selfdata.ActionEvent.Value == nil then
+	elseif ongen == true and selfdata.ActionEvent.Value == nil and beast.Name ~= pl.Name then
 		ongen = false
 		local bp = (tick() - gentick) * computerbp
 		add(bp, "Objective", "REPAIR")
@@ -466,7 +466,7 @@ selfdata.ActionProgress.Changed:Connect(function()
 end)
 
 selfdata.ActionInput.Changed:Connect(function()
-	if selfdata.ActionInput.Value == true and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "FreezePod" then
+	if selfdata.ActionInput.Value == true and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "FreezePod" and beast.Name ~= pl.Name then
 		local user = selfdata.ActionEvent.Value.Parent.CapturedTorso
 
 		if user.Value ~= nil then
