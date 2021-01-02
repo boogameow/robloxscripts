@@ -398,7 +398,7 @@ ps.PlayerRemoving:Connect(function(pl)
 			add(bp, "Boldness", "CHASE")
 		end
 
-		add(survivedbp, "Survival", "BEAST DISCONENCT")
+		add(survivedbp, "Survival", "ESCAPED")
 	end
 end)
 
