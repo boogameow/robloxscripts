@@ -423,7 +423,7 @@ end
 
 
 selfdata.Escaped.Changed:Connect(function()
-	if selfdata.Escaped.Value == true then
+	if selfdata.Escaped.Value == true and selfdata.Captured.Value == false then
 		add(survivedbp, "Survival", "ESCAPED")
 	end
 end)
