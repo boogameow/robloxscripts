@@ -12,6 +12,7 @@ local rep = game:GetService("ReplicatedStorage")
 
 
 local inchase = false
+local rescuedb = false
 local ongen = false
 local orig = 0
 local startchase = 0
@@ -469,17 +470,18 @@ selfdata.ActionProgress.Changed:Connect(function()
 end)
 
 selfdata.ActionInput.Changed:Connect(function()
-	if selfdata.ActionInput.Value == true and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "FreezePod" and beast.Name ~= pl.Name then
+	if selfdata.ActionInput.Value == true and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "FreezePod" and beast.Name ~= pl.Name and rescuedb == false then
 		local user = selfdata.ActionEvent.Value.Parent.CapturedTorso
 
-		if user.Value ~= nil then
+		if user.Value ~= nil and rescuedb == false then
 			user = ps:GetPlayerFromCharacter(user.Value.Parent)
 
-			if user and user.TempPlayerStatsModule.Captured.Value == true then
+			if user and user.TempPlayerStatsModule.Captured.Value == true and rescuedb == false then
+				rescuedb = true
 				add(rescuebp, "Altruism", "RESCUE")
 
 				delay(10, function()
-					if ps:FindFirstChild(user.Name) and user.TempPlayerStatsModule.Captured.Value == false and user.TempPlayerStatsModule.Ragdoll.Value == false then
+					if user.TempPlayerStatsModule.Captured.Value == false and user.TempPlayerStatsModule.Ragdoll.Value == false then
 						add(saferescuebp, "Altruism", "SAFE RESCUE")
 					end
 				end)
@@ -488,4 +490,4 @@ selfdata.ActionInput.Changed:Connect(function()
 	end
 end)
 
-print("Successfully loaded DBD script. (V1.12)")
+print("Successfully loaded DBD script. (V1.13)")
