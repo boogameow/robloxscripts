@@ -29,7 +29,7 @@ local graspescapebp = 1000 -- awarded for escaping the killer
 local survivedbp = 4000 -- awarded for surviving
 
 -- boldness
-local chasebp = 60 -- earned bp per second
+local chasebp = 65 -- earned bp per second
 local escapedchasebp = 300 -- bonus for winning a chase
 
 -- altruism 
