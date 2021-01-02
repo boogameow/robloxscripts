@@ -22,7 +22,7 @@ local endchasetime = 6
 -- SURVIVOR:
 -- objective
 local computerbp = 25 -- awarded per second of gen
-local opengatebp = 1250
+local opengatebp = 1500
 
 -- survival
 local graspescapebp = 1000 -- awarded for escaping the killer
