@@ -23,7 +23,7 @@ local endchasetime = 6
 
 -- SURVIVOR:
 -- objective
-local computerbp = 14 -- awarded per % of gen
+local computerbp = 11 -- awarded per % of gen
 local opengatebp = 1500
 
 -- survival
@@ -31,7 +31,7 @@ local graspescapebp = 1000 -- awarded for escaping the killer
 local survivedbp = 4000 -- awarded for surviving
 
 -- boldness
-local chasebp = 65 -- earned bp per second
+local chasebp = 60 -- earned bp per second
 local escapedchasebp = 300 -- bonus for winning a chase
 
 -- altruism 
@@ -316,10 +316,10 @@ run.Heartbeat:Connect(function()
 
 		local cast = workspace:Raycast(beast.Character.HumanoidRootPart.Position, beast.Character.HumanoidRootPart.CFrame.LookVector * 35, params)
 
-		if cast then
+		if cast and pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0)  then
 			chasetick = tick()
 		else 
-			if tick() - chasetick > endchasetime or selfdata.Captured.Value == true or selfdata.Ragdoll.Value == true or selfdata.Escaped.Value == true or selfdata.Health.Value <= 0 or pl.Character.Humanoid.MoveDirection == Vector3.new(0, 0, 0) then
+			if tick() - chasetick > endchasetime or selfdata.Captured.Value == true or selfdata.Ragdoll.Value == true or selfdata.Escaped.Value == true or selfdata.Health.Value <= 0 then
 				inchase = false
 				outtw:Play()
 
