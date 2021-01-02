@@ -370,7 +370,10 @@ active.Changed:Connect(function()
 		end
 
 		chasemusic.SoundId = musics[math.random(1, #musics)]
-		beast.Character:WaitForChild("Hammer").Handle.SoundChaseMusic:Destroy()
+
+		if beast.Name ~= pl.Name then
+			beast.Character:WaitForChild("Hammer").Handle.SoundChaseMusic:Destroy()
+		end
 	end
 end)
 
