@@ -13,6 +13,7 @@ local rep = game:GetService("ReplicatedStorage")
 
 local inchase = false
 local ongen = false
+local orig = 0
 local startchase = 0
 local genprog = 0
 local chasetick = 0
@@ -21,7 +22,7 @@ local endchasetime = 6
 
 -- SURVIVOR:
 -- objective
-local computerbp = 30 -- awarded per second of gen
+local computerbp = 12 -- awarded per % of gen
 local opengatebp = 1500
 
 -- survival
@@ -317,7 +318,7 @@ run.Heartbeat:Connect(function()
 		if cast then
 			chasetick = tick()
 		else 
-			if tick() - chasetick > endchasetime or selfdata.Captured.Value == true or selfdata.Ragdoll.Value == true or selfdata.Escaped.Value == true and selfdata.Health.Value <= 0 then
+			if tick() - chasetick > endchasetime or selfdata.Captured.Value == true or selfdata.Ragdoll.Value == true or selfdata.Escaped.Value == true and selfdata.Health.Value <= 0 and and pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
 				inchase = false
 				outtw:Play()
 
@@ -340,7 +341,7 @@ run.Heartbeat:Connect(function()
 
 		local cast = workspace:Raycast(beast.Character.HumanoidRootPart.Position, beast.Character.HumanoidRootPart.CFrame.LookVector * 45, params)
 
-		if cast and cast.Instance.Parent.Name == pl.Name then
+		if cast and cast.Instance.Parent.Name == pl.Name and pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
 			startchase = tick()
 			chasetick = tick()
 			inchase = true
@@ -452,7 +453,7 @@ selfdata.ActionEvent.Changed:Connect(function()
 	if selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ComputerTable" and beast.Name ~= pl.Name then
 		genprog = 0
 		ongen = true
-	elseif ongen == true and selfdata.ActionEvent.Value == nil and beast.Name ~= pl.Name then
+	elseif ongen == true and selfdata.ActionEvent.Value == nil and beast.Name ~= pl.Name and genprog ~= 0 then
 		ongen = false
 		add(genprog * computerbp, "Objective", "REPAIR")
 		genprog = 0
@@ -463,7 +464,7 @@ selfdata.ActionProgress.Changed:Connect(function()
 	if selfdata.ActionProgress.Value >= 99 and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ExitDoor" then
 		add(opengatebp, "Objective", "OPEN GATE")
 	elseif selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "ComputerTable" then
-		genprog = genprog + 1
+		genprog = genprog + (selfdata.ActionProgress.Value - orig * 100)
 	end 
 end)
 
