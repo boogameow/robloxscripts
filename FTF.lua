@@ -513,10 +513,13 @@ local function makeSurvivors()
 				elseif player.TempPlayerStatsModule.Health.Value <= 0 then
 					healthstate = "Dead"
 					cl.Image = states["Dead"]
+				elseif player.TempPlayerStatsModule.Health.Value == true then
+					healthstate = "Escaped"
+					cl.Image = states["Escaped"]
 				end
 
 
-				if healthstate ~= "Dead" then
+				if healthstate ~= "Dead" and healthstate ~= "Escaped" then
 					local con1, con2, con3, con4
 
 					con1 = player.TempPlayerStatsModule.Ragdoll.Changed:Connect(function()
@@ -874,5 +877,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v20.1"
+version.Text = "DBD in FTF v20.2"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
