@@ -877,5 +877,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v20.2"
+version.Text = "DBD in FTF v21"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
