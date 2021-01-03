@@ -3,12 +3,20 @@ local ps = game:GetService("Players")
 	local pl = ps.LocalPlayer
 	local selfdata = pl:WaitForChild("TempPlayerStatsModule")
 
+local curgui = pl.PlayerGui:WaitForChild("ScreenGui")
+	curgui.ResetOnSpawn = false
+	curgui.StatusBars.Visible = false
+	curgui.GameInfoFrame.Visible = false
+
 local ts = game:GetService("TweenService")
 	local info = TweenInfo.new(.2, Enum.EasingStyle.Linear)
 
 local rep = game:GetService("ReplicatedStorage")
 	local beast
 	local active = rep.IsGameActive
+	local gens = rep.ComputersLeft
+	local timeleft = rep.GameTimer
+	local map = rep.CurrentMap
 
 
 local inchase = false
@@ -45,18 +53,20 @@ local gone, fade
 local queue = {}
 local musics = {"rbxassetid://4743442159", "rbxassetid://4743720538", "rbxassetid://4627984150", "rbxassetid://1410762446", "rbxassetid://6154346256", "rbxassetid://6172092571"}
 
-local bloodpoints = {
-	["Survival"] = 0;
-	["Objective"] = 0;
-	["Boldness"] = 0;
-	["Altruism"] = 0
+local categories = {
+	["Survival"] = {0, "rbxassetid://6100699830"};
+	["Objective"] = {0, "rbxassetid://6100699948"};
+	["Boldness"] = {0, "rbxassetid://6100700044"};
+	["Altruism"] = {0, "rbxassetid://6175736811"}
 }
 
-local ids = {
-	["Survival"] = "rbxassetid://6100699830";
-	["Objective"] = "rbxassetid://6100699948";
-	["Boldness"] = "rbxassetid://6100700044";
-	["Altruism"] = "rbxassetid://6175736811"
+local states = {
+	["Disconnect"] = "rbxassetid://6182998912";
+	["Healthy"] = "rbxassetid://6182953419";
+	["Captured"] = "rbxassetid://6183376914";
+	["Dead"] = "rbxassetid://6183373907";
+	["Knocked"] = "rbxassetid://6183370183";
+	["Escaped"] = "rbxassetid://6183526348"
 }
 
 
@@ -65,6 +75,7 @@ local gui = Instance.new("ScreenGui", pl.PlayerGui)
 	gui.ResetOnSpawn = false
 
 local version = Instance.new("TextLabel", gui)
+	version.Name = "Version"
 	version.AnchorPoint = Vector2.new(0, 1)
 	version.BackgroundTransparency = 1
 	version.BorderSizePixel = 0
@@ -79,12 +90,18 @@ local version = Instance.new("TextLabel", gui)
 	version.ZIndex = 10
 
 local chasemusic = Instance.new("Sound", gui)
+	chasemusic.Name = "Chase"
 	chasemusic.Volume = 0
 	chasemusic.Looped = true
 	chasemusic.Playing = true
 	chasemusic.SoundId = musics[math.random(1, #musics)]
 
-local g1 = {Volume = .8}
+local gensound = Instance.new("Sound", gui)
+	gensound.Name = "Generator"
+	gensound.Volume = .8
+	gensound.SoundId = "rbxassetid://6183313125"
+
+local g1 = {Volume = .85}
 local g2 = {Volume = 0}
 local intw = ts:Create(chasemusic, TweenInfo.new(1, Enum.EasingStyle.Linear), g1)
 local outtw = ts:Create(chasemusic, TweenInfo.new(2, Enum.EasingStyle.Linear), g2)
@@ -140,6 +157,119 @@ local grad = Instance.new("UIGradient", award)
 	grad.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
 	grad.Rotation = -90
 
+-- match stuff
+local status = Instance.new("TextLabel", gui)
+	status.Name = "Status"
+	status.AnchorPoint = Vector2.new(0.5, 0)
+	status.BackgroundTransparency = 1
+	status.BorderSizePixel = 0
+	status.Position = UDim2.new(0.5, 0, 0.03, 0)
+	status.Size = UDim2.new(0.75, 0, 0.03, 0)
+	status.Font = Enum.Font.Gotham
+	status.Text = ""
+	status.TextScaled = true
+	status.TextTransparency = 0.2
+	status.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local match = Instance.new("Frame", gui)
+	match.Name = "Game"
+	match.BorderSizePixel = 0
+	match.BackgroundTransparency = 1
+	match.Size = UDim2.new(1, 0, 1, 0)
+	match.Visible = false
+
+local matchdivider = Instance.new("Frame", match)
+	matchdivider.Name = "Divider"
+	matchdivider.AnchorPoint = Vector2.new(0, 1)
+	matchdivider.BackgroundTransparency = 0.5
+	matchdivider.BorderSizePixel = 0
+	matchdivider.Position = UDim2.new(0.02, 0, 0.89, 0)
+	matchdivider.Size = UDim2.new(0.165, 0, 0.005, 0)
+
+local last = NumberSequenceKeypoint.new(1, 0.9)
+local middle = NumberSequenceKeypoint.new(0.5, 0.25)
+local start = NumberSequenceKeypoint.new(0, 0.9)
+
+local dividgrad = Instance.new("UIGradient", matchdivider)
+	dividgrad.Name = "Grad"
+	dividgrad.Transparency = NumberSequence.new({start, middle, last})
+
+local genimage = Instance.new("ImageLabel", matchdivider)
+	genimage.Name = "Image"
+	genimage.BackgroundTransparency = 1
+	genimage.BorderSizePixel = 0
+	genimage.Position = UDim2.new(0.12, 0, -10, 0)
+	genimage.Size = UDim2.new(0.18, 0, 9, 0)
+	genimage.Image = "rbxassetid://6183021590"
+	genimage.ImageTransparency = 0.5
+
+local gentext = Instance.new("TextLabel", matchdivider)
+	gentext.Name = "Gens"
+	gentext.BackgroundTransparency = 1
+	gentext.BorderSizePixel = 0
+	gentext.Position = UDim2.new(0.04, 0, -10, 0)
+	gentext.Size = UDim2.new(0.1, 0, 9, 0)
+	gentext.Font = Enum.Font.Gotham
+	gentext.Text = "-"
+	gentext.TextScaled = true
+	gentext.TextTransparency = 0.5
+	gentext.TextXAlignment = Enum.TextXAlignment.Left
+	gentext.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local players = Instance.new("Frame", match)
+	players.Name = "Players"
+	players.AnchorPoint = Vector2.new(0, 1)
+	players.BackgroundTransparency = 1
+	players.BorderSizePixel = 0
+	players.Position = UDim2.new(0.03, 0, 0.95, 0)
+	players.Size = UDim2.new(0.13, 0, 0.05, 0)
+
+local list = Instance.new("UIListLayout", players)
+	list.Name = "List"
+	list.FillDirection = Enum.FillDirection.Horizontal
+	list.Padding = UDim.new(0.09, 0)
+
+local example = Instance.new("ImageLabel")
+	example.Name = "User"
+	example.BackgroundTransparency = 1
+	example.BorderSizePixel = 0
+	example.Size = UDim2.new(0.22, 0, 1, 0)
+	example.ZIndex = 2
+	example.Image = states["Healthy"]
+	example.ImageTransparency = 0.6
+
+local hp = Instance.new("Frame", example)
+	hp.Name = "Health"
+	hp.AnchorPoint = Vector2.new(0, 0)
+	hp.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+	hp.BackgroundTransparency = 1
+	hp.BorderSizePixel = 0
+	hp.Position = UDim2.new(0, 0, 1.3, 0)
+	hp.Size = UDim2.new(1, 0, 0.08, 0)
+	hp.Visible = false
+
+local last = NumberSequenceKeypoint.new(1, 0)
+local middle = NumberSequenceKeypoint.new(0.25, 0.45)
+local start = NumberSequenceKeypoint.new(0, 0.9)
+
+local hpgrad = Instance.new("UIGradient", hp)
+	hpgrad.Name = "Grad"
+	hpgrad.Transparency = NumberSequence.new({start, middle, last})
+
+local plrname = Instance.new("TextLabel", example)
+	plrname.Name = "User"
+	plrname.AnchorPoint = Vector2.new(0.5, 0)
+	plrname.BackgroundTransparency = 1
+	plrname.BorderSizePixel = 0
+	plrname.Position = UDim2.new(0.5, 0, 1, 0)
+	plrname.Size = UDim2.new(1.25, 0, 0.25, 0)
+	plrname.ZIndex = 2
+	plrname.Font = Enum.Font.Gotham
+	plrname.Text = "Username"
+	plrname.TextScaled = true
+	plrname.TextTransparency = 0.6
+	plrname.TextColor3 = Color3.fromRGB(255, 255, 255)
+
 -- post game
 local container = Instance.new("Frame", gui)
 	container.Name = "Post"
@@ -192,7 +322,7 @@ local insideimage = Instance.new("ImageLabel", boldness)
 	insideimage.BorderSizePixel = 0
 	insideimage.Position = UDim2.new(0.5, 0, 0.5, 0)
 	insideimage.Size = UDim2.new(0.75, 0, 0.7, 0)
-	insideimage.Image = ids["Boldness"]
+	insideimage.Image = categories["Boldness"][2]
 
 grad:Clone().Parent = boldness
 -- end of template
@@ -200,19 +330,19 @@ grad:Clone().Parent = boldness
 local objective = boldness:Clone()	
 	objective.Name = "Objective"
 	objective.Position = UDim2.new(0.41, 0, 0.96, 0)
-	objective.Inside.Image = ids["Objective"]
+	objective.Inside.Image = categories["Objective"][2]
 	objective.Parent = container
 
 local survival = boldness:Clone()
 	survival.Name = "Survival"
 	survival.Position = UDim2.new(0.47, 0, 0.96, 0)
-	survival.Inside.Image = ids["Survival"]
+	survival.Inside.Image = categories["Survival"][2]
 	survival.Parent = container
 
 local altruism = boldness:Clone()
 	altruism.Name = "Altruism"
 	altruism.Position = UDim2.new(0.59, 0, 0.96, 0)
-	altruism.Inside.Image = ids["Altruism"]
+	altruism.Inside.Image = categories["Altruism"][2]
 	altruism.Parent = container
 
 
@@ -238,6 +368,34 @@ local function tween(obj, trans)
 end
 
 
+local function makebold(obj)
+
+	local info2 = TweenInfo.new(.5, Enum.EasingStyle.Linear)
+	local info3 = TweenInfo.new(2, Enum.EasingStyle.Linear)
+
+	local g = {ImageTransparency = 0}
+		ts:Create(obj, info2, g):Play()
+
+	local g = {TextTransparency = 0}
+		ts:Create(obj.User, info2, g):Play()
+
+	local g = {BackgroundTransparency = 0}
+		ts:Create(obj.Health, info2, g):Play()
+
+	delay(5, function()
+		local g = {ImageTransparency = 0.6}
+			ts:Create(obj, info3, g):Play()
+
+		local g = {TextTransparency = 0.6}
+			ts:Create(obj.User, info3, g):Play()
+
+		local g = {BackgroundTransparency = 0.6}
+			ts:Create(obj.Health, info3, g):Play()
+	end)
+
+end
+
+
 local function add(points, cat, action)
 	local points = math.clamp(points, 0, 8000)
 	points = math.floor(points)
@@ -245,20 +403,20 @@ local function add(points, cat, action)
 	if points <= 0 then return end
 
 	local cl = award:Clone()
-		cl.Category.Image = ids[cat]
+		cl.Category.Image = categories[cat][2]
 		cl.Action.Text = action
 	
-	bloodpoints[cat] = math.clamp((bloodpoints[cat] + points), 0, 8000)
+	categories[cat][1] = math.clamp((categories[cat][1] + points), 0, 8000)
 	
-	if bloodpoints[cat] >= 8000 then
+	if categories[cat][1] >= 8000 then
 		posts[cat].Amount.Text = "+8000"
 		cl.BP.Text = "MAX"
 		cl.Grad.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
 		posts[cat].Grad.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
 	else
-		posts[cat].Amount.Text = "+" .. bloodpoints[cat]
+		posts[cat].Amount.Text = "+" .. categories[cat][1]
 		cl.BP.Text = "+" .. points
-		local num = 1 - (bloodpoints[cat] / 8000)
+		local num = 1 - (categories[cat][1] / 8000)
 		
 		local endred = ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
 		local red = ColorSequenceKeypoint.new(num, Color3.fromRGB(255, 0, 0))
@@ -319,6 +477,121 @@ local function add(points, cat, action)
 	
 end
 
+
+local function makeSurvivors()
+	for i, v in pairs(players:GetChildren()) do
+		if v:IsA("ImageLabel") then
+			v:Destroy()
+		end
+	end
+
+	gentext.Text = tostring(gens.Value)
+
+	for i, v in pairs(curgui.StatusBars:GetChildren()) do
+		if v:IsA("TextLabel") and v.Text ~= "" then
+			local player = ps:FindFirstChild(v.Text)
+
+			if player then
+				local healthstate = "Healthy"
+
+				local cl = example:Clone()
+					cl.Name = player.Name
+					cl.User.Text = player.Name
+
+				cl.Parent = players 
+
+				if player.TempPlayerStatsModule.Ragdoll.Value == true then
+					healthstate = "Knocked"
+					cl.Image = states["Knocked"]
+				elseif player.TempPlayerStatsModule.Captured.Value == true then
+					healthstate = "Captured"
+					cl.Image = states["Captured"]
+					cl.Health.Visible = true
+
+					local new = player.TempPlayerStatsModule.Health.Value
+					cl.Health.Size = UDim2.new(new / 100, 0, 0.08, 0)
+				elseif player.TempPlayerStatsModule.Health.Value <= 0 then
+					healthstate = "Dead"
+					cl.Image = states["Dead"]
+				end
+
+
+				if healthstate ~= "Dead" then
+					local con1, con2, con3, con4
+
+					con1 = player.TempPlayerStatsModule.Ragdoll.Changed:Connect(function()
+						if cl and cl.Parent ~= nil then
+							local state = player.TempPlayerStatsModule.Ragdoll
+
+							if state.Value == true then
+								healthstate = "Knocked"
+								cl.Image = states["Knocked"]
+								makebold(cl)
+							elseif state.Value == false and healthstate == "Knocked" then
+								healthstate = "Healthy"
+								cl.Image = states["Healthy"]
+								makebold(cl)
+							end
+						end
+					end)
+
+					con2 = player.TempPlayerStatsModule.Captured.Changed:Connect(function()
+						if cl and cl.Parent ~= nil then
+							local state = player.TempPlayerStatsModule.Captured
+
+							if state.Value == true then
+								healthstate = "Captured"
+								cl.Image = states["Captured"]
+								cl.Health.Visible = true
+								makebold(cl)
+							elseif healthstate ~= "Dead" then
+								healthstate = "Healthy"
+								cl.Image = states["Healthy"]
+								cl.Health.Visible = false
+								makebold(cl)
+							end
+						end
+					end)
+
+					con3 = player.TempPlayerStatsModule.Health.Changed:Connect(function()
+						if cl and cl.Parent ~= nil then 
+							local new = player.TempPlayerStatsModule.Health.Value
+							cl.Health.Size = UDim2.new(new / 100, 0, 0.08, 0)
+
+							if new <= 0 and healthstate ~= "Escaped" then
+								con1:Disconnect()
+								con2:Disconnect()
+								con3:Disconnect()
+								con4:Disconnect()
+
+								healthstate = "Dead"
+								cl.Image = states["Dead"]
+								cl.Health.Visible = false
+								makebold(cl)
+							end
+						end
+					end)
+
+					con4 = player.TempPlayerStatsModule.Escaped.Changed:Connect(function()
+						if cl and cl.Parent ~= nil and player.TempPlayerStatsModule.Escaped.Value == true and healthstate ~= "Dead" then
+							con1:Disconnect()
+							con2:Disconnect()
+							con3:Disconnect()
+							con4:Disconnect()
+
+							healthstate = "Escaped"
+							cl.Image = states["Escaped"]
+							makebold(cl)
+						end
+					end)
+				end
+
+			end
+		end
+	end
+end
+
+
 run.Heartbeat:Connect(function()
 	local params
 
@@ -369,26 +642,49 @@ run.Heartbeat:Connect(function()
 	end
 end)
 
+if active.Value == false then
+	status.Text = "Intermission"
+else 
+	match.Visible = true
+
+	local sec = string.format("%.2d", tostring(timeleft.Value % 60))
+	local min = tostring(math.floor(timeleft.Value % 3600 / 60))
+
+	status.Text = tostring(min .. ":" .. sec)
+
+	makeSurvivors()
+end
 
 active.Changed:Connect(function()
 	if active.Value == false then
-		for i, v in pairs(bloodpoints) do
-			bloodpoints[i] = 0
+		status.Text = "Intermission"
+
+		for i, v in pairs(categories) do
+			categories[i][1] = 0
 		end
 
-		container.Visible = true
+		match.Visible = false
 
-		delay(45, function()
-			container.Visible = false
+		delay(15, function()
+			container.Visible = true
 
-			for i, v in pairs(bloodpoints) do
-				posts[i].Grad.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
-				posts[i].Amount.Text = "+0"
-			end
+			delay(30, function()
+				container.Visible = false
+
+				for i, v in pairs(categories) do
+					posts[i].Grad.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+					posts[i].Amount.Text = "+0"
+				end
+			end)
 		end)
+
+
 	else 
 		escaped = false
 		chasemusic.SoundId = musics[math.random(1, #musics)]
+
+		makeSurvivors()
+		match.Visible = true
 
 		if beast.Name ~= pl.Name then
 			beast.Character:WaitForChild("Hammer").Handle.SoundChaseMusic:Destroy()
@@ -426,6 +722,10 @@ ps.PlayerRemoving:Connect(function(pl)
 			escaped = true
 			add(survivedbp, "Survival", "ESCAPED")
 		end
+	elseif players:FindFirstChild(pl.Name) then
+		players[pl.Name].Image = states["Disconnect"]
+		players[pl.Name].Health.Visible = false
+		makebold(players[pl.Name])
 	end
 end)
 
@@ -532,5 +832,47 @@ selfdata.ActionInput.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v19"
+map.Changed:Connect(function()
+	status.Text = "Match Starting - " .. tostring(map.Value)
+end)
+
+
+gens.Changed:Connect(function()
+	if active.Value ~= true then return end
+
+	gentext.Text = tostring(gens.Value)
+	gensound:Play()
+
+	if genimage.ImageTransparency ~= 0.5 then return end
+
+	local info2 = TweenInfo.new(.5, Enum.EasingStyle.Linear)
+	local info3 = TweenInfo.new(2, Enum.EasingStyle.Linear)
+
+	local g = {ImageTransparency = 0}
+		ts:Create(genimage, info2, g):Play()
+
+	local g = {TextTransparency = 0}
+		ts:Create(gentext, info2, g):Play()
+
+	delay(5, function()
+		local g = {ImageTransparency = 0.5}
+			ts:Create(genimage, info2, g):Play()
+
+		local g = {TextTransparency = 0.5}
+			ts:Create(gentext, info2, g):Play()
+	end)
+end)
+
+
+timeleft.Changed:Connect(function()
+	if active.Value == true then
+		local sec = string.format("%.2d", tostring(timeleft.Value % 60))
+		local min = tostring(math.floor(timeleft.Value % 3600 / 60))
+
+		status.Text = tostring(min .. ":" .. sec)
+	end
+end)
+
+
+version.Text = "DBD in FTF v20"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
