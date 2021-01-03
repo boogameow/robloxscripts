@@ -66,7 +66,7 @@ local states = {
 	["Captured"] = "rbxassetid://6183376914";
 	["Dead"] = "rbxassetid://6183373907";
 	["Knocked"] = "rbxassetid://6183370183";
-	["Escaped"] = "rbxassetid://6183526348"
+	["Escaped"] = "rbxassetid://6183595110"
 }
 
 
@@ -874,5 +874,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v20"
+version.Text = "DBD in FTF v20.1"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
