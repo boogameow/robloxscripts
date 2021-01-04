@@ -778,7 +778,7 @@ ps.PlayerRemoving:Connect(function(v)
 			escaped = true
 			add(survivedbp, "Survival", "ESCAPED")
 		end
-	elseif players:FindFirstChild(v.Name) and v.Name ~= pl.Name then
+	elseif players:FindFirstChild(v.Name) and v.Name ~= pl.Name and active.Value == true then
 		players[v.Name].Image = states["Disconnect"]
 		players[v.Name].Health.Visible = false
 		makebold(players[v.Name])
