@@ -762,8 +762,8 @@ ps.PlayerAdded:Connect(function(pl)
 end)
 
 
-ps.PlayerRemoving:Connect(function(pl)
-	if beast and beast.Name == pl.Name then
+ps.PlayerRemoving:Connect(function(v)
+	if beast and beast.Name == v.Name then
 		if inchase == true then
 			inchase = false
 			outtw:Play()
@@ -778,10 +778,10 @@ ps.PlayerRemoving:Connect(function(pl)
 			escaped = true
 			add(survivedbp, "Survival", "ESCAPED")
 		end
-	elseif players:FindFirstChild(pl.Name) then
-		players[pl.Name].Image = states["Disconnect"]
-		players[pl.Name].Health.Visible = false
-		makebold(players[pl.Name])
+	elseif players:FindFirstChild(v.Name) and v.Name ~= pl.Name then
+		players[v.Name].Image = states["Disconnect"]
+		players[v.Name].Health.Visible = false
+		makebold(players[v.Name])
 
 		death:Play()
 	end
@@ -933,5 +933,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v24"
+version.Text = "DBD in FTF v24.1"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
