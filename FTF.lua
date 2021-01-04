@@ -23,6 +23,7 @@ local inchase = false
 local escaped = false
 local rescuedb = false
 local ongen = false
+local chasers = {}
 local orig = 0
 local startchase = 0
 local genprog = 0
@@ -37,10 +38,10 @@ local opengatebp = 1500
 
 -- survival
 local graspescapebp = 1000 -- awarded for escaping the killer
-local survivedbp = 4000 -- awarded for surviving
+local survivedbp = 4500 -- awarded for surviving
 
--- boldness / hunter
-local chasebp = 50 -- divided by 2 for the beast
+-- boldness
+local chasebp = 50 
 local escapedchasebp = 300 -- bonus for winning a chase
 
 -- altruism 
@@ -51,20 +52,20 @@ local protectionbp = 500
 -- KILLER:
 -- deviousness
 local alldeadbp = 2500
-local startdashbp = 350
-local dashdownbp = 750
+local startdashbp = 350 -- need to figure these out
+local dashdownbp = 750 -- ^
 
 -- brutality
-local hitbp = 600
-local quitterbp = 850
+local hitbp = 500
+local quitterbp = 750
 
--- hunter
+-- hunter [not started]
 local foundbp = 250
 local beastchasebp = chasebp / 2
 
 -- sacrifice
-local secondstagebp = 400 -- when a survivor reaches below halfway health
-local capturedbp = 300
+local capturedbp = 250
+local secondstagebp = 450
 local frozenbp = 1000
 
 
@@ -76,7 +77,11 @@ local categories = {
 	["Survival"] = {0, "rbxassetid://6100699830"};
 	["Objective"] = {0, "rbxassetid://6100699948"};
 	["Boldness"] = {0, "rbxassetid://6100700044"};
-	["Altruism"] = {0, "rbxassetid://6175736811"}
+	["Altruism"] = {0, "rbxassetid://6175736811"};
+	["Deviousness"] = {0, "rbxassetid://6191396057"};
+	["Brutality"] = {0, "rbxassetid://6191396198"};
+	["Hunter"] = {0, "rbxassetid://6191395935"};
+	["Sacrifice"] = {0, "rbxassetid://6191395807"}
 }
 
 local states = {
@@ -375,7 +380,11 @@ local posts = {
 	["Boldness"] = boldness;
 	["Objective"] = objective;
 	["Survival"] = survival;
-	["Altruism"] = altruism
+	["Altruism"] = altruism;
+	["Sacrifice"] = altruism;
+	["Hunter"] = boldness;
+	["Brutality"] = objective;
+	["Deviousness"] = survival
 }
 
 
@@ -513,7 +522,7 @@ local function attemptchase()
 
 		local result = workspace:Raycast(beast.Character.PrimaryPart.Position, pl.Character.PrimaryPart.Position - beast.Character.PrimaryPart.Position, params) 
 
-		if delta < math.rad(45) and (beast.Character.PrimaryPart.Position - pl.Character.PrimaryPart.Position).magnitude < 40 and result and result.Instance then
+		if delta < math.rad(45) and pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and (beast.Character.PrimaryPart.Position - pl.Character.PrimaryPart.Position).magnitude < 40 and result and result.Instance then
 			local chased = ps:GetPlayerFromCharacter(result.Instance.Parent)
 
 			if chased and chased.Name == pl.Name then
@@ -527,7 +536,7 @@ local function attemptchase()
 					end
 
 					intw:Play()
-				elseif pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
+				else
 					chasetick = tick()
 				end
 			elseif tick() - chasetick > endchasetime and inchase == true then
@@ -560,22 +569,80 @@ local function attemptchase()
 				add(bp, "Boldness", "CHASE")
 			end)
 		end
-	-- elseif active.Value == true and beast.Name == pl.Name and pl.Character.Parent ~= nil then
-		
+	elseif active.Value == true and beast.Name == pl.Name and pl.Character.Parent ~= nil then
+		for i, v in pairs(ps:GetChildren()) do
+			local data = v:FindFirstChild("TempPlayerStatsModule")
+
+			if data and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and data.Escaped.Value == false and data.Captured.Value == false and data.Ragdoll.Value == false and data.Health.Value > 0 and beast.Name ~= v.Name then
+				local exp = CFrame.new(beast.Character.PrimaryPart.CFrame.p, v.Character.PrimaryPart.CFrame.p)
+				local delta = (exp.LookVector - beast.Character.PrimaryPart.CFrame.LookVector).magnitude
+
+				local params = RaycastParams.new()
+					params.FilterType = Enum.RaycastFilterType.Blacklist
+					params.FilterDescendantsInstances = {beast.Character}
+
+				local result = workspace:Raycast(beast.Character.PrimaryPart.Position, v.Character.PrimaryPart.Position - beast.Character.PrimaryPart.Position, params) 
+
+				if delta < math.rad(45) and v.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and (beast.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).magnitude < 40 and result and result.Instance then
+					local chaser = ps:GetPlayerFromCharacter(result.Instance.Parent)
+
+					if chaser and chaser.Name == v.Name then
+						local isbeingchased = table.find(chasers, chaser.Name)
+
+						if not isbeingchased then
+							if #chasers <= 0 and inchase == false then
+								inchase = true
+								startchase = tick()
+								intw:Play()
+
+								if chasemusic.Volume == 0 then
+									chasemusic.TimePosition = 0
+								end
+							end
+
+							add(foundbp, "Hunter", "SURVIVOR FOUND")
+							table.insert(chasers, #chasers + 1, chaser.Name)
+						end
+
+						chasetick = tick()
+					end
+				end
+			end
+		end
+
+		if tick() - chasetick > endchasetime and inchase == true then
+			chasers = {}
+			inchase = false
+
+			outtw:Play()
+
+			local bp = (tick() - startchase) * beastchasebp
+			local bp = math.clamp(bp, 0, 8000)
+
+			add(bp, "Hunter", "CHASE")
+		end
 	elseif inchase == true then
 		inchase = false
 		outtw:Play()
 
-		local bp = (tick() - startchase) * chasebp
-		local bp = math.clamp(bp, 0, 8000)
+		if beast.Name ~= pl.Name then
+			local bp = (tick() - startchase) * chasebp
+			local bp = math.clamp(bp, 0, 8000)
 
-		if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
-			add(escapedchasebp, "Boldness", "ESCAPED CHASE")
+			if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
+				add(escapedchasebp, "Boldness", "ESCAPED CHASE")
+			end
+
+			delay(.3, function()
+				add(bp, "Boldness", "CHASE")
+			end)
+		else 
+			local bp = (tick() - startchase) * beastchasebp
+			local bp = math.clamp(bp, 0, 8000)
+
+			add(bp, "Hunter", "CHASE")
 		end
 
-		delay(.3, function()
-			add(bp, "Boldness", "CHASE")
-		end)
 	end
 end
 
@@ -595,6 +662,7 @@ local function makeSurvivors()
 
 			if player then
 				local healthstate = "Healthy"
+				local secondstage = false
 
 				local cl = example:Clone()
 					cl.Name = player.Name
@@ -632,6 +700,10 @@ local function makeSurvivors()
 								healthstate = "Knocked"
 								cl.Image = states["Knocked"]
 								makebold(cl)
+
+								if beast.Name == pl.Name then
+									add(hitbp, "Brutality", "HIT")
+								end
 							elseif state.Value == false and healthstate == "Knocked" then
 								healthstate = "Healthy"
 								cl.Image = states["Healthy"]
@@ -649,6 +721,10 @@ local function makeSurvivors()
 								cl.Image = states["Captured"]
 								cl.Health.Visible = true
 								makebold(cl)
+
+								if beast.Name == pl.Name then
+									add(capturedbp, "Sacrifice", "CAPTURE")
+								end
 							elseif healthstate ~= "Dead" then
 								healthstate = "Healthy"
 								cl.Image = states["Healthy"]
@@ -675,6 +751,13 @@ local function makeSurvivors()
 								makebold(cl)
 
 								death:Play()
+
+								if beast.Name == pl.Name then
+									add(frozenbp, "Sacrifice", "FROZEN")
+								end
+							elseif new <= 50 and secondstage == false and beast.Name == pl.Name then
+								secondstage = true
+								add(secondstagebp, "Sacrifice", "GETTING COLDER")
 							end
 						end
 					end)
@@ -716,15 +799,36 @@ end
 
 active.Changed:Connect(function()
 	if active.Value == false then
-		status.Text = "Intermission"
+		local amount = 0
+		local agreed = 0
+
+		for i, v in pairs(players:GetChildren()) do
+			if v:IsA("ImageLabel") then
+				local pl = ps:FindFirstChild(v.Name)
+				amount = amount + 1
+
+				if pl then
+					if pl.TempPlayerStatsModule.Escaped.Value == false then
+						agreed = agreed + 1
+					end
+				else 
+					agreed = agreed + 1
+				end
+			end
+		end
+
+		if agreed >= amount and beast.Name == pl.Name then
+			add(alldeadbp, "Deviousness", "MERCILESS VICTORY")
+		end
 
 		for i, v in pairs(categories) do
 			categories[i][1] = 0
 		end
 
-		match.Visible = false
-
-		delay(15, function()
+		
+		delay(12, function()
+			status.Text = "Intermission"
+			match.Visible = false
 			container.Visible = true
 
 			delay(30, function()
@@ -737,7 +841,6 @@ active.Changed:Connect(function()
 			end)
 		end)
 
-
 	else 
 		escaped = false
 		chasemusic.SoundId = musics[math.random(1, #musics)]
@@ -747,6 +850,16 @@ active.Changed:Connect(function()
 
 		if beast.Name ~= pl.Name then
 			beast.Character:WaitForChild("Hammer").Handle.SoundChaseMusic:Destroy()
+
+			altruism.Inside.Image = categories["Altruism"][2]
+			boldness.Inside.Image = categories["Boldness"][2]
+			objective.Inside.Image = categories["Objective"][2]
+			survival.Inside.Image = categories["Survival"][2]
+		else 
+			altruism.Inside.Image = categories["Sacrifice"][2]
+			boldness.Inside.Image = categories["Hunter"][2]
+			objective.Inside.Image = categories["Brutality"][2]
+			survival.Inside.Image = categories["Deviousness"][2]
 		end
 	end
 end)
@@ -787,6 +900,12 @@ ps.PlayerRemoving:Connect(function(v)
 		makebold(players[v.Name])
 
 		death:Play()
+
+		if beast.Name == pl.Name then
+			add(quitterbp, "Brutality", "QUITTER BONUS")
+		else 
+			add(quitterbp / 1.25, "Altruism", "ABANDONED")
+		end
 	end
 end)
 
@@ -871,10 +990,24 @@ selfdata.ActionInput.Changed:Connect(function()
 						con:Disconnect()
 						con = nil
 
+						local safe = true
+						local con3
+
 						add(rescuebp, "Altruism", "RESCUE")
 
+						con3 = user.TempPlayerStatsModule.Ragdoll.Changed:Connect(function()
+							if user.TempPlayerStatsModule.Ragdoll.Value == true then
+								con3:Disconnect()
+								con3 = nil
+								safe = false
+							end
+						end)
+
 						delay(10, function()
-							if user.TempPlayerStatsModule.Captured.Value == false and user.TempPlayerStatsModule.Ragdoll.Value == false then
+							if safe == true then
+								con3:Disconnect()
+								con3 = nil
+
 								add(saferescuebp, "Altruism", "SAFE RESCUE")
 							end
 						end)
@@ -936,5 +1069,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v26.1"
+version.Text = "DBD in FTF v27"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
