@@ -44,7 +44,7 @@ local chasebp = 60 -- earned bp per second
 local escapedchasebp = 300 -- bonus for winning a chase
 
 -- altruism 
-local rescuebp = 750
+local rescuebp = 1000
 local saferescuebp = 250
 local protectionbp = 500
 
