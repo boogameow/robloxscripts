@@ -478,6 +478,86 @@ local function add(points, cat, action)
 end
 
 
+local function attemptchase()
+	if active.Value == true and beast.Name ~= pl.Name and pl.Character.Parent ~= nil and selfdata.Escaped.Value == false and selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false and selfdata.Health.Value > 0 and ps:FindFirstChild(beast.Name) then
+		local exp = CFrame.new(beast.Character.PrimaryPart.CFrame.p, pl.Character.PrimaryPart.CFrame.p)
+		local delta = (exp.LookVector - beast.Character.PrimaryPart.CFrame.LookVector).magnitude
+
+		if delta < math.rad(45) and (beast.Character.PrimaryPart.Position - pl.Character.PrimaryPart.Position).magnitude < 40 then
+			local params = RaycastParams.new()
+				params.FilterType = Enum.RaycastFilterType.Blacklist
+				params.FilterDescendantsInstances = {beast.Character}
+
+			local result = workspace:Raycast(beast.Character.PrimaryPart.Position, pl.Character.PrimaryPart.Position - beast.Character.PrimaryPart.Position, params) 
+
+			if result and result.Instance then
+				local chased = ps:GetPlayerFromCharacter(result.Instance.Parent)
+
+				if chased and chased.Name == pl.Name then
+					if inchase == false then
+						inchase = true
+						startchase = tick()
+						chasetick = tick()
+
+						if chasemusic.Volume == 0 then
+							chasemusic.TimePosition = 0
+						end
+
+						intw:Play()
+					elseif pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
+						chasetick = tick()
+					end
+				elseif tick() - chasetick > endchasetime and inchase == true then
+					inchase = false
+					outtw:Play()
+
+					local bp = (tick() - startchase) * chasebp
+					local bp = math.clamp(bp, 0, 8000)
+
+					if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
+						add(escapedchasebp, "Boldness", "ESCAPED CHASE")
+					end
+
+					delay(.3, function()
+						add(bp, "Boldness", "CHASE")
+					end)
+				end
+			elseif tick() - chasetick > endchasetime and inchase == true then
+				inchase = false
+				outtw:Play()
+
+				local bp = (tick() - startchase) * chasebp
+				local bp = math.clamp(bp, 0, 8000)
+
+				if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
+					add(escapedchasebp, "Boldness", "ESCAPED CHASE")
+				end
+
+				delay(.3, function()
+					add(bp, "Boldness", "CHASE")
+				end)
+			end
+		end
+	-- elseif active.Value == true and beast.Name == pl.Name and pl.Character.Parent ~= nil then
+		
+	elseif (inchase == true and tick() - chasetick > endchasetime) or inchase == true then
+		inchase = false
+		outtw:Play()
+
+		local bp = (tick() - startchase) * chasebp
+		local bp = math.clamp(bp, 0, 8000)
+
+		if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
+			add(escapedchasebp, "Boldness", "ESCAPED CHASE")
+		end
+
+		delay(.3, function()
+			add(bp, "Boldness", "CHASE")
+		end)
+	end
+end
+
+
 local function makeSurvivors()
 	for i, v in pairs(players:GetChildren()) do
 		if v:IsA("ImageLabel") then
@@ -595,55 +675,7 @@ local function makeSurvivors()
 end
 
 
-run.Heartbeat:Connect(function()
-	local params
-
-	if inchase == true and beast and beast.Name ~= pl.Name and ps:FindFirstChild(beast.Name) and beast.Character.Parent then
-		params = RaycastParams.new()
-			params.FilterDescendantsInstances = {pl.Character}
-			params.FilterType = Enum.RaycastFilterType.Whitelist
-
-		local cast = workspace:Raycast(beast.Character.HumanoidRootPart.Position, beast.Character.HumanoidRootPart.CFrame.LookVector * 35, params)
-
-		if cast and pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0)  then
-			chasetick = tick()
-		else 
-			if tick() - chasetick > endchasetime or selfdata.Captured.Value == true or selfdata.Ragdoll.Value == true or selfdata.Escaped.Value == true or selfdata.Health.Value <= 0 then
-				inchase = false
-				outtw:Play()
-
-				local bp = (tick() - startchase) * chasebp
-				local bp = math.clamp(bp, 0, 8000)
-
-				if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
-					add(escapedchasebp, "Boldness", "ESCAPED CHASE")
-				end
-
-				delay(.3, function()
-					add(bp, "Boldness", "CHASE")
-				end)
-			end
-		end
-	elseif selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false and selfdata.Escaped.Value == false and selfdata.Health.Value ~= 0 and beast and ps:FindFirstChild(beast.Name) and beast.Name ~= pl.Name and beast.Character.Parent and active.Value == true then
-		params = RaycastParams.new()
-			params.FilterDescendantsInstances = {beast.Character}
-			params.FilterType = Enum.RaycastFilterType.Blacklist
-
-		local cast = workspace:Raycast(beast.Character.HumanoidRootPart.Position, beast.Character.HumanoidRootPart.CFrame.LookVector * 45, params)
-
-		if cast and cast.Instance.Parent.Name == pl.Name and pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
-			startchase = tick()
-			chasetick = tick()
-			inchase = true
-
-			if chasemusic.Volume == 0 then
-				chasemusic.TimePosition = 0
-			end
-			
-			intw:Play()
-		end
-	end
-end)
+run.Heartbeat:Connect(attemptchase)
 
 if active.Value == false then
 	status.Text = "Intermission"
@@ -798,6 +830,7 @@ selfdata.ActionProgress.Changed:Connect(function()
 	end 
 end)
 
+
 selfdata.ActionInput.Changed:Connect(function()
 	if selfdata.ActionInput.Value == true and selfdata.ActionEvent.Value ~= nil and selfdata.ActionEvent.Value.Parent.Parent.Name == "FreezePod" and beast.Name ~= pl.Name then
 		local user = selfdata.ActionEvent.Value.Parent.CapturedTorso
@@ -877,5 +910,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v21"
+version.Text = "DBD in FTF v22"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
