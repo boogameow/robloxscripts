@@ -39,14 +39,33 @@ local opengatebp = 1500
 local graspescapebp = 1000 -- awarded for escaping the killer
 local survivedbp = 4000 -- awarded for surviving
 
--- boldness
-local chasebp = 50 -- earned bp per second
+-- boldness / hunter
+local chasebp = 50 -- divided by 2 for the beast
 local escapedchasebp = 300 -- bonus for winning a chase
 
 -- altruism 
 local rescuebp = 1000
 local saferescuebp = 250
 local protectionbp = 500
+
+-- KILLER:
+-- deviousness
+local alldeadbp = 2500
+local startdashbp = 350
+local dashdownbp = 750
+
+-- brutality
+local hitbp = 600
+local quitterbp = 850
+
+-- hunter
+local foundbp = 250
+local beastchasebp = chasebp / 2
+
+-- sacrifice
+local secondstagebp = 400 -- when a survivor reaches below halfway health
+local capturedbp = 300
+local frozenbp = 1000
 
 
 local gone, fade
