@@ -507,44 +507,28 @@ local function attemptchase()
 		local exp = CFrame.new(beast.Character.PrimaryPart.CFrame.p, pl.Character.PrimaryPart.CFrame.p)
 		local delta = (exp.LookVector - beast.Character.PrimaryPart.CFrame.LookVector).magnitude
 
-		if delta < math.rad(45) and (beast.Character.PrimaryPart.Position - pl.Character.PrimaryPart.Position).magnitude < 40 then
-			local params = RaycastParams.new()
-				params.FilterType = Enum.RaycastFilterType.Blacklist
-				params.FilterDescendantsInstances = {beast.Character}
+		local params = RaycastParams.new()
+			params.FilterType = Enum.RaycastFilterType.Blacklist
+			params.FilterDescendantsInstances = {beast.Character}
 
-			local result = workspace:Raycast(beast.Character.PrimaryPart.Position, pl.Character.PrimaryPart.Position - beast.Character.PrimaryPart.Position, params) 
+		local result = workspace:Raycast(beast.Character.PrimaryPart.Position, pl.Character.PrimaryPart.Position - beast.Character.PrimaryPart.Position, params) 
 
-			if result and result.Instance then
-				local chased = ps:GetPlayerFromCharacter(result.Instance.Parent)
+		if delta < math.rad(45) and (beast.Character.PrimaryPart.Position - pl.Character.PrimaryPart.Position).magnitude < 40 and result and result.Instance then
+			local chased = ps:GetPlayerFromCharacter(result.Instance.Parent)
 
-				if chased and chased.Name == pl.Name then
-					if inchase == false then
-						inchase = true
-						startchase = tick()
-						chasetick = tick()
+			if chased and chased.Name == pl.Name then
+				if inchase == false then
+					inchase = true
+					startchase = tick()
+					chasetick = tick()
 
-						if chasemusic.Volume == 0 then
-							chasemusic.TimePosition = 0
-						end
-
-						intw:Play()
-					elseif pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
-						chasetick = tick()
-					end
-				elseif tick() - chasetick > endchasetime and inchase == true then
-					inchase = false
-					outtw:Play()
-
-					local bp = (tick() - startchase) * chasebp
-					local bp = math.clamp(bp, 0, 8000)
-
-					if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
-						add(escapedchasebp, "Boldness", "ESCAPED CHASE")
+					if chasemusic.Volume == 0 then
+						chasemusic.TimePosition = 0
 					end
 
-					delay(.3, function()
-						add(bp, "Boldness", "CHASE")
-					end)
+					intw:Play()
+				elseif pl.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
+					chasetick = tick()
 				end
 			elseif tick() - chasetick > endchasetime and inchase == true then
 				inchase = false
@@ -952,5 +936,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v26"
+version.Text = "DBD in FTF v26.1"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
