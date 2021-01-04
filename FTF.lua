@@ -537,10 +537,24 @@ local function attemptchase()
 					add(bp, "Boldness", "CHASE")
 				end)
 			end
+		elseif tick() - chasetick > endchasetime and inchase == true then
+			inchase = false
+			outtw:Play()
+
+			local bp = (tick() - startchase) * chasebp
+			local bp = math.clamp(bp, 0, 8000)
+
+			if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
+				add(escapedchasebp, "Boldness", "ESCAPED CHASE")
+			end
+
+			delay(.3, function()
+				add(bp, "Boldness", "CHASE")
+			end)
 		end
 	-- elseif active.Value == true and beast.Name == pl.Name and pl.Character.Parent ~= nil then
 		
-	elseif (inchase == true and tick() - chasetick > endchasetime) or inchase == true then
+	elseif inchase == true then
 		inchase = false
 		outtw:Play()
 
@@ -910,5 +924,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v22"
+version.Text = "DBD in FTF v23"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
