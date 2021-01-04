@@ -101,6 +101,11 @@ local gensound = Instance.new("Sound", gui)
 	gensound.Volume = .8
 	gensound.SoundId = "rbxassetid://6183313125"
 
+local death = Instance.new("Sound", gui)
+	death.Name = "Disconnect"
+	death.Volume = 1
+	death.SoundId = "rbxassetid://6187279552"
+
 local g1 = {Volume = .85}
 local g2 = {Volume = 0}
 local intw = ts:Create(chasemusic, TweenInfo.new(1, Enum.EasingStyle.Linear), g1)
@@ -665,6 +670,8 @@ local function makeSurvivors()
 								cl.Image = states["Dead"]
 								cl.Health.Visible = false
 								makebold(cl)
+
+								death:Play()
 							end
 						end
 					end)
@@ -775,6 +782,8 @@ ps.PlayerRemoving:Connect(function(pl)
 		players[pl.Name].Image = states["Disconnect"]
 		players[pl.Name].Health.Visible = false
 		makebold(players[pl.Name])
+
+		death:Play()
 	end
 end)
 
@@ -924,5 +933,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v23"
+version.Text = "DBD in FTF v24"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
