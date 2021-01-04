@@ -40,7 +40,7 @@ local graspescapebp = 1000 -- awarded for escaping the killer
 local survivedbp = 4000 -- awarded for surviving
 
 -- boldness
-local chasebp = 60 -- earned bp per second
+local chasebp = 50 -- earned bp per second
 local escapedchasebp = 300 -- bonus for winning a chase
 
 -- altruism 
@@ -933,5 +933,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v25"
+version.Text = "DBD in FTF v26"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
