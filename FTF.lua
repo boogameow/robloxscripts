@@ -85,7 +85,7 @@ local frozenbp = 1000
 
 local gone, fade
 local queue = {}
-local musics = {"rbxassetid://4743442159", "rbxassetid://4743720538", "rbxassetid://4627984150", "rbxassetid://1410762446", "rbxassetid://6154346256", "rbxassetid://6172092571"}
+local musics = {"rbxassetid://4743442159", "rbxassetid://4743720538", "rbxassetid://4627984150", "rbxassetid://1410762446", "rbxassetid://6172092571"}
 
 local categories = {
 	["Survival"] = {0, "rbxassetid://6100699830"};
