@@ -453,7 +453,7 @@ local function tangles(left, right)
 			tw.Completed:Wait()
 		end
 
-		wait(1)
+		wait(.6)
 
 		if inchase == false then
 			break
@@ -1190,5 +1190,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v28"
+version.Text = "DBD Tweaks v28.1"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
