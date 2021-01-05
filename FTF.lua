@@ -833,7 +833,7 @@ active.Changed:Connect(function()
 			match.Visible = false
 			container.Visible = true
 
-			delay(30, function()
+			delay(40, function()
 				container.Visible = false
 
 				for i, v in pairs(categories) do
@@ -1071,5 +1071,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v27"
+version.Text = "DBD in FTF v27.1"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
