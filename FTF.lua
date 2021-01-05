@@ -19,7 +19,7 @@ local rep = game:GetService("ReplicatedStorage")
 	local map = rep.CurrentMap
 
 local tangling = false
-local fastang = TweenInfo.new(.25, Enum.EasingStyle.Linear)
+local fastang = TweenInfo.new(.2, Enum.EasingStyle.Linear)
 local slowang = TweenInfo.new(.5, Enum.EasingStyle.Sine)
 
 local angles = {
