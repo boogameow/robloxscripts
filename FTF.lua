@@ -18,6 +18,20 @@ local rep = game:GetService("ReplicatedStorage")
 	local timeleft = rep.GameTimer
 	local map = rep.CurrentMap
 
+local tangling = false
+local fastang = TweenInfo.new(.25, Enum.EasingStyle.Linear)
+local slowang = TweenInfo.new(.5, Enum.EasingStyle.Sine)
+
+local angles = {
+	[1] = {10, fastang};
+	[2] = {0, fastang};
+	[3] = {-18, slowang};
+	[4] = {10, fastang};
+	[5] = {0, fastang};
+	[6] = {10, fastang};
+	[7] = {0, fastang}
+}
+
 
 local inchase = false
 local escaped = false
@@ -87,9 +101,9 @@ local categories = {
 local states = {
 	["Disconnect"] = "rbxassetid://6182998912";
 	["Healthy"] = "rbxassetid://6182953419";
-	["Captured"] = "rbxassetid://6183376914";
-	["Dead"] = "rbxassetid://6183373907";
-	["Knocked"] = "rbxassetid://6183370183";
+	["Captured"] = "rbxassetid://6192725189";
+	["Dead"] = "rbxassetid://6192735151";
+	["Knocked"] = "rbxassetid://6192722291";
 	["Escaped"] = "rbxassetid://6183595110"
 }
 
@@ -299,6 +313,41 @@ local plrname = Instance.new("TextLabel", example)
 	plrname.TextTransparency = 0.6
 	plrname.TextColor3 = Color3.fromRGB(255, 255, 255)
 
+local extangles = Instance.new("Frame", example)
+	extangles.Name = "Tangles"
+	extangles.BackgroundTransparency = 1
+	extangles.BorderSizePixel = 0
+	extangles.Size = UDim2.new(1, 0, 1, 0)
+
+local leftangle = Instance.new("ImageLabel", extangles)
+	leftangle.Name = "Left"
+	leftangle.AnchorPoint = Vector2.new(0, 1)
+	leftangle.BackgroundTransparency = 1
+	leftangle.BorderSizePixel = 0
+	leftangle.Position = UDim2.new(-0.36, 0, 0.95, 0)
+	leftangle.Size = UDim2.new(0.34, 0, 0.45, 0)
+	leftangle.Image = "rbxassetid://6192303297"
+	leftangle.ImageTransparency = 0.6
+
+local toptangle = Instance.new("ImageLabel", leftangle)
+	toptangle.Name = "Top"
+	toptangle.BackgroundTransparency = 1
+	toptangle.BorderSizePixel = 0
+	toptangle.Position = UDim2.new(0, 0, 0, 0)
+	toptangle.Size = UDim2.new(1.3, 0, -1.25, 0)
+	toptangle.Image = "rbxassetid://6192632052"
+	toptangle.ImageTransparency = 0.6
+
+local rightangle = leftangle:Clone()
+	rightangle.Parent = extangles
+	rightangle.Name = "Right"
+	rightangle.AnchorPoint = Vector2.new(0, 1)
+	rightangle.Image = "rbxassetid://6192460445"
+	rightangle.Position = UDim2.new(1.04, 0, 0.95, 0)
+	rightangle.Top.AnchorPoint = Vector2.new(1, 0)
+	rightangle.Top.Position = UDim2.new(1, 0, 0, 0)
+	rightangle.Top.Image = "rbxassetid://6192460346"
+
 -- post game
 local container = Instance.new("Frame", gui)
 	container.Name = "Post"
@@ -388,6 +437,33 @@ local posts = {
 }
 
 
+local function tangles(left, right)
+	if tangling == true then return end
+
+	tangling = true
+	local g = {}
+
+	while true do
+		for i = 1, #angles do
+			g.Rotation = angles[i][1]
+			local tw = ts:Create(left, angles[i][2], g)
+			local tw2 = ts:Create(right, angles[i][2], g)
+			tw2:Play()
+			tw:Play()
+			tw.Completed:Wait()
+		end
+
+		wait(1)
+
+		if inchase == false then
+			break
+		end
+	end
+
+	tangling = false
+end
+
+
 local function tween(obj, trans)
 	
 	local goal = {}; goal.ImageTransparency = trans
@@ -409,15 +485,30 @@ local function makebold(obj)
 	local g = {ImageTransparency = 0}
 		ts:Create(obj, info2, g):Play()
 
+	if obj:FindFirstChild("Tangles") then
+		ts:Create(obj.Tangles.Left, info2, g):Play()
+		ts:Create(obj.Tangles.Left.Top, info2, g):Play()
+		ts:Create(obj.Tangles.Right, info2, g):Play()
+		ts:Create(obj.Tangles.Right.Top, info2, g):Play()
+	end
+
 	local g = {TextTransparency = 0}
 		ts:Create(obj.User, info2, g):Play()
 
 	local g = {BackgroundTransparency = 0}
 		ts:Create(obj.Health, info2, g):Play()
 
+
 	delay(5, function()
 		local g = {ImageTransparency = 0.6}
 			ts:Create(obj, info3, g):Play()
+
+		if obj:FindFirstChild("Tangles") then
+			ts:Create(obj.Tangles.Left, info3, g):Play()
+			ts:Create(obj.Tangles.Left.Top, info3, g):Play()
+			ts:Create(obj.Tangles.Right, info3, g):Play()
+			ts:Create(obj.Tangles.Right.Top, info3, g):Play()
+		end
 
 		local g = {TextTransparency = 0.6}
 			ts:Create(obj.User, info3, g):Play()
@@ -536,6 +627,12 @@ local function attemptchase()
 					end
 
 					intw:Play()
+
+					local guip = players:FindFirstChild(pl.Name)
+
+					makebold(guip)
+					tangles(guip.Tangles.Left, guip.Tangles.Right)
+
 				else
 					chasetick = tick()
 				end
@@ -670,6 +767,10 @@ local function makeSurvivors()
 					cl.Name = player.Name
 					cl.User.Text = player.Name
 
+				if player.Name ~= pl.Name then
+					cl.Tangles:Destroy()
+				end
+
 				cl.Parent = players 
 
 				if player.TempPlayerStatsModule.Ragdoll.Value == true then
@@ -685,6 +786,15 @@ local function makeSurvivors()
 				elseif player.TempPlayerStatsModule.Health.Value <= 0 then
 					healthstate = "Dead"
 					cl.Image = states["Dead"]
+
+					if cl:FindFirstChild("Tangles") then
+						cl.ImageColor3 = Color3.fromRGB(255, 0, 0)
+
+						cl.Tangles.Left.ImageColor3 = Color3.fromRGB(255, 0, 0)
+						cl.Tangles.Right.ImageColor3 = Color3.fromRGB(255, 0, 0)
+						cl.Tangles.Left.Top.ImageColor3 = Color3.fromRGB(255, 0, 0)
+						cl.Tangles.Right.Top.ImageColor3 = Color3.fromRGB(255, 0, 0)
+					end
 				elseif player.TempPlayerStatsModule.Health.Value == true then
 					healthstate = "Escaped"
 					cl.Image = states["Escaped"]
@@ -756,6 +866,15 @@ local function makeSurvivors()
 
 								if beast.Name == pl.Name then
 									add(frozenbp, "Sacrifice", "FROZEN")
+								end
+
+								if cl:FindFirstChild("Tangles") then
+									cl.ImageColor3 = Color3.fromRGB(255, 0, 0)
+
+									cl.Tangles.Left.ImageColor3 = Color3.fromRGB(255, 0, 0)
+									cl.Tangles.Right.ImageColor3 = Color3.fromRGB(255, 0, 0)
+									cl.Tangles.Left.Top.ImageColor3 = Color3.fromRGB(255, 0, 0)
+									cl.Tangles.Right.Top.ImageColor3 = Color3.fromRGB(255, 0, 0)
 								end
 							elseif new <= 50 and secondstage == false and beast.Name == pl.Name then
 								secondstage = true
@@ -1071,5 +1190,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD in FTF v27.1"
+version.Text = "DBD Tweaks v28"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
