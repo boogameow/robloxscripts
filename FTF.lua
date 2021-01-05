@@ -607,10 +607,12 @@ local function attemptchase()
 						chasetick = tick()
 					end
 				end
+			elseif table.find(chasers, v.Name) then
+				table.remove(chasers, table.find(chasers, v.Name))
 			end
 		end
 
-		if tick() - chasetick > endchasetime and inchase == true then
+		if (tick() - chasetick > endchasetime or #chasers <= 0) and inchase == true then
 			chasers = {}
 			inchase = false
 
@@ -757,7 +759,7 @@ local function makeSurvivors()
 								end
 							elseif new <= 50 and secondstage == false and beast.Name == pl.Name then
 								secondstage = true
-								add(secondstagebp, "Sacrifice", "GETTING COLDER")
+								add(secondstagebp, "Sacrifice", "FREEZING COLD")
 							end
 						end
 					end)
