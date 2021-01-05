@@ -78,7 +78,7 @@ local foundbp = 250
 local beastchasebp = chasebp / 2
 
 -- sacrifice
-local capturedbp = 250
+local capturedbp = 400
 local secondstagebp = 450
 local frozenbp = 1000
 
