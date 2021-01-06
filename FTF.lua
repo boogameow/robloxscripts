@@ -36,6 +36,7 @@ local angles = {
 local escaped = false
 local rescuedb = false
 local ongen = false
+local inchase = false
 local chasers = {}
 local orig = 0
 local genprog = 0
@@ -135,6 +136,11 @@ local gensound = Instance.new("Sound", gui)
 	gensound.Name = "Generator"
 	gensound.Volume = .8
 	gensound.SoundId = "rbxassetid://6183313125"
+
+local foundsound = Instance.new("Sound", gui)
+	foundsound.Name = "Obsession_Found"
+	foundsound.Volume = 1
+	foundsound.SoundId = "rbxassetid://6197939321"
 
 local death = Instance.new("Sound", gui)
 	death.Name = "Disconnect"
@@ -607,6 +613,7 @@ local function stopchase(v)
 	end
 
 	if v.Name == pl.Name and chasers[v.Name] then
+		inchase = false
 		outtw:Play()
 
 		local bp = (tick() - chasers[v.Name][2]) * chasebp
@@ -622,6 +629,7 @@ local function stopchase(v)
 	elseif beast.Name == pl.Name and chasers[v.Name] then
 		if chaseramount == 1 then
 			outtw:Play()
+			inchase = false
 		end
 
 		local bp = (tick() - chasers[v.Name][2]) * beastchasebp
@@ -654,14 +662,9 @@ local function attemptchase()
 
 					if chaser and chaser.Name == v.Name then
 						if not chasers[v.Name] then
-							local chaseramount = 0
-
-							for i, v in pairs(chasers) do
-								chaseramount = chaseramount + 1
-							end
-
-							if chaseramount <= 0 then
+							if inchase == false then
 								if v.Name == pl.Name or beast.Name == pl.Name then
+									inchase = true
 									intw:Play()
 
 									if chasemusic.Volume == 0 then
@@ -678,11 +681,18 @@ local function attemptchase()
 							local entry = players:FindFirstChild(v.Name)
 
 							if entry and entry:FindFirstChild("Tangles") then
+								if beast.Name == pl.Name then
+									foundsound:Play()
+								end
+
 								makebold(entry)
-								tangles(entry.Tangles)
+
+								spawn(function()
+									tangles(entry.Tangles)
+								end)
 							end
 						else 
-							chasers[v.Name][1] = tick()
+							chasers[v.Name] = {tick(), chasers[v.Name][2]}
 						end
 					end
 				end 
@@ -982,7 +992,7 @@ ps.PlayerRemoving:Connect(function(v)
 		end
 
 		chasers = {}
-	elseif players:FindFirstChild(v.Name) and v.Name ~= pl.Name and active.Value == true then
+	elseif players:FindFirstChild(v.Name) and active.Value == true then
 		local cl = players[v.Name]
 
 		if cl.Image == states["Dead"] then return end
@@ -1172,5 +1182,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v29.1"
+version.Text = "DBD Tweaks v29.2"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
