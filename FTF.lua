@@ -685,7 +685,7 @@ local function attemptchase()
 									foundsound:Play()
 								end
 
-								if tangles == false then
+								if tangling == false then
 									makebold(entry)
 
 									spawn(function()
@@ -1184,5 +1184,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v29.4"
+version.Text = "DBD Tweaks v29.41"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
