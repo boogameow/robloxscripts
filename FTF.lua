@@ -73,7 +73,7 @@ local quitterbp = 750
 
 -- hunter [not started]
 local foundbp = 250
-local beastchasebp = chasebp / 1.5
+local beastchasebp = chasebp / 1.3
 
 -- sacrifice
 local capturedbp = 400
