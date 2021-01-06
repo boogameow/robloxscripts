@@ -657,7 +657,7 @@ local function attemptchase()
 
 				local result = workspace:Raycast(beast.Character.PrimaryPart.Position, v.Character.PrimaryPart.Position - beast.Character.PrimaryPart.Position, params) 
 
-				if delta < math.rad(45) and v.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and (beast.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).magnitude < 40 and result and result.Instance then
+				if delta < math.rad(45) and v.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and (beast.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).magnitude < 45 and result and result.Instance then
 					local chaser = ps:GetPlayerFromCharacter(result.Instance.Parent)
 
 					if chaser and chaser.Name == v.Name then
@@ -1182,5 +1182,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v29.2"
+version.Text = "DBD Tweaks v29.3"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
