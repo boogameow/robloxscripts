@@ -38,14 +38,13 @@ local rescuedb = false
 local ongen = false
 local chasers = {}
 local orig = 0
-local startchase = 0
 local genprog = 0
 local endchasetime = 6
 
 
 -- SURVIVOR:
 -- objective
-local computerbp = 10
+local computerbp = 12
 local opengatebp = 1500
 
 -- survival
@@ -53,7 +52,7 @@ local graspescapebp = 1000 -- awarded for escaping the killer
 local survivedbp = 4500 -- awarded for surviving
 
 -- boldness
-local chasebp = 50 
+local chasebp = 50
 local escapedchasebp = 300 -- bonus for winning a chase
 
 -- altruism 
@@ -73,7 +72,7 @@ local quitterbp = 750
 
 -- hunter [not started]
 local foundbp = 250
-local beastchasebp = chasebp / 2
+local beastchasebp = chasebp / 1.5
 
 -- sacrifice
 local capturedbp = 400
@@ -600,6 +599,41 @@ local function add(points, cat, action)
 end
 
 
+local function stopchase(v)
+	local chaseramount = 0
+
+	for i, v in pairs(chasers) do
+		chaseramount = chaseramount + 1
+	end
+
+	if v.Name == pl.Name and chasers[v.Name] then
+		outtw:Play()
+
+		local bp = (tick() - chasers[v.Name][2]) * chasebp
+		local bp = math.clamp(bp, 0, 8000)
+
+		if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
+			add(escapedchasebp, "Boldness", "ESCAPED CHASE")
+		end
+
+		delay(.3, function()
+			add(bp, "Boldness", "CHASE")
+		end)
+	elseif beast.Name == pl.Name and chasers[v.Name] then
+		if chaseramount == 1 then
+			outtw:Play()
+		end
+
+		local bp = (tick() - chasers[v.Name][2]) * beastchasebp
+		local bp = math.clamp(bp, 0, 8000)
+
+		add(bp, "Hunter", "CHASE")
+	end
+
+	chasers[v.Name] = nil
+end
+
+
 local function attemptchase()
 	if active.Value == true then
 		for i, v in pairs(ps:GetChildren()) do
@@ -620,12 +654,19 @@ local function attemptchase()
 
 					if chaser and chaser.Name == v.Name then
 						if not chasers[v.Name] then
-							if #chasers <= 0 and (v.Name == pl.Name or beast.Name == pl.Name) then
-								startchase = tick()
-								intw:Play()
+							local chaseramount = 0
 
-								if chasemusic.Volume == 0 then
-									chasemusic.TimePosition = 0
+							for i, v in pairs(chasers) do
+								chaseramount = chaseramount + 1
+							end
+
+							if chaseramount <= 0 then
+								if v.Name == pl.Name or beast.Name == pl.Name then
+									intw:Play()
+
+									if chasemusic.Volume == 0 then
+										chasemusic.TimePosition = 0
+									end
 								end
 							end
 
@@ -633,64 +674,25 @@ local function attemptchase()
 								add(foundbp, "Hunter", "SURVIVOR FOUND")
 							end
 
+							chasers[v.Name] = {tick(), tick()}
 							local entry = players:FindFirstChild(v.Name)
 
 							if entry and entry:FindFirstChild("Tangles") then
 								makebold(entry)
 								tangles(entry.Tangles)
 							end
+						else 
+							chasers[v.Name][1] = tick()
 						end
-
-						chasers[v.Name] = tick()
 					end
 				end 
 
-				if chasers[v.Name] and tick() - chasers[v.Name] > endchasetime then
-					chasers[v.Name] = nil
-
-					if v.Name == pl.Name then
-						outtw:Play()
-
-						local bp = (tick() - startchase) * chasebp
-						local bp = math.clamp(bp, 0, 8000)
-
-						if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
-							add(escapedchasebp, "Boldness", "ESCAPED CHASE")
-						end
-
-						delay(.3, function()
-							add(bp, "Boldness", "CHASE")
-						end)
-					end
+				if chasers[v.Name] and tick() - chasers[v.Name][1] > endchasetime then
+					stopchase(v)
 				end
 			elseif chasers[v.Name] then
-				chasers[v.Name] = nil
-
-				if v.Name == pl.Name then
-					outtw:Play()
-
-					local bp = (tick() - startchase) * chasebp
-					local bp = math.clamp(bp, 0, 8000)
-
-					if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
-						add(escapedchasebp, "Boldness", "ESCAPED CHASE")
-					end
-
-					delay(.3, function()
-						add(bp, "Boldness", "CHASE")
-					end)
-				end
+				stopchase(v)
 			end
-		end
-
-		if beast.Name == pl.Name and #chasers <= 0 then
-			chasers = {}
-			outtw:Play()
-
-			local bp = (tick() - startchase) * beastchasebp
-			local bp = math.clamp(bp, 0, 8000)
-
-			add(bp, "Hunter", "CHASE")
 		end
 	end
 end
@@ -755,8 +757,6 @@ local function makeSurvivors()
 					cl.Image = states["Dead"]
 
 					if cl:FindFirstChild("Tangles") then
-						cl.ImageColor3 = Color3.fromRGB(255, 0, 0)
-
 						cl.Tangles.Left.ImageColor3 = Color3.fromRGB(255, 0, 0)
 						cl.Tangles.Right.ImageColor3 = Color3.fromRGB(255, 0, 0)
 						cl.Tangles.Left.Top.ImageColor3 = Color3.fromRGB(255, 0, 0)
@@ -836,8 +836,6 @@ local function makeSurvivors()
 								end
 
 								if cl:FindFirstChild("Tangles") then
-									cl.ImageColor3 = Color3.fromRGB(255, 0, 0)
-
 									cl.Tangles.Left.ImageColor3 = Color3.fromRGB(255, 0, 0)
 									cl.Tangles.Right.ImageColor3 = Color3.fromRGB(255, 0, 0)
 									cl.Tangles.Left.Top.ImageColor3 = Color3.fromRGB(255, 0, 0)
@@ -913,30 +911,7 @@ active.Changed:Connect(function()
 			categories[i][1] = 0
 		end
 
-		if #chasers > 0 then
-			outtw:Play()
-
-			if beast.Name ~= pl.Name and chasers[pl.Name] then
-				local bp = (tick() - startchase) * chasebp
-				local bp = math.clamp(bp, 0, 8000)
-
-				if selfdata.Captured.Value == false and selfdata.Ragdoll.Value == false then
-					add(escapedchasebp, "Boldness", "ESCAPED CHASE")
-				end
-
-				delay(.3, function()
-					add(bp, "Boldness", "CHASE")
-				end)
-			else 
-				local bp = (tick() - startchase) * beastchasebp
-				local bp = math.clamp(bp, 0, 8000)
-
-				add(bp, "Hunter", "CHASE")
-			end
-		end
-
-		chasers = {}
-
+		stopchase(pl)
 		
 		delay(12, function()
 			status.Text = "Intermission"
@@ -995,7 +970,7 @@ ps.PlayerRemoving:Connect(function(v)
 		if chasers[pl.Name] then
 			outtw:Play()
 
-			local bp = (tick() - startchase) * chasebp
+			local bp = (tick() - chasers[pl.Name][2]) * chasebp
 			local bp = math.clamp(bp, 0, 8000)
 
 			add(bp, "Boldness", "CHASE")
@@ -1008,9 +983,13 @@ ps.PlayerRemoving:Connect(function(v)
 
 		chasers = {}
 	elseif players:FindFirstChild(v.Name) and v.Name ~= pl.Name and active.Value == true then
-		players[v.Name].Image = states["Disconnect"]
-		players[v.Name].Health.Visible = false
-		makebold(players[v.Name])
+		local cl = players[v.Name]
+
+		if cl.Image == states["Dead"] then return end
+
+		cl.Image = states["Disconnect"]
+		cl.Health.Visible = false
+		makebold(cl)
 
 		death:Play()
 
@@ -1020,8 +999,15 @@ ps.PlayerRemoving:Connect(function(v)
 			add(quitterbp / 1.25, "Altruism", "ABANDONED")
 		end
 
+		if cl:FindFirstChild("Tangles") then
+			cl.Tangles.Left.ImageColor3 = Color3.fromRGB(255, 0, 0)
+			cl.Tangles.Right.ImageColor3 = Color3.fromRGB(255, 0, 0)
+			cl.Tangles.Left.Top.ImageColor3 = Color3.fromRGB(255, 0, 0)
+			cl.Tangles.Right.Top.ImageColor3 = Color3.fromRGB(255, 0, 0)
+		end
+
 		if chasers[v.Name] then
-			chasers[v.Name] = nil
+			stopchase(v)
 		end
 	end
 end)
@@ -1186,5 +1172,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v29"
+version.Text = "DBD Tweaks v29.1"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
