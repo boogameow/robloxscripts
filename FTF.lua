@@ -685,11 +685,13 @@ local function attemptchase()
 									foundsound:Play()
 								end
 
-								makebold(entry)
+								if tangles == false then
+									makebold(entry)
 
-								spawn(function()
-									tangles(entry.Tangles)
-								end)
+									spawn(function()
+										tangles(entry.Tangles)
+									end)
+								end
 							end
 						else 
 							chasers[v.Name] = {tick(), chasers[v.Name][2]}
@@ -1182,5 +1184,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v29.3"
+version.Text = "DBD Tweaks v29.4"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
