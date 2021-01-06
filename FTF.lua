@@ -648,16 +648,16 @@ local function attemptchase()
 			local data = v:FindFirstChild("TempPlayerStatsModule")
 
 			if data and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and data.Escaped.Value == false and data.Captured.Value == false and data.Ragdoll.Value == false and data.Health.Value > 0 and beast.Name ~= v.Name then
-				local exp = CFrame.new(beast.Character.PrimaryPart.CFrame.p, v.Character.PrimaryPart.CFrame.p)
-				local delta = (exp.LookVector - beast.Character.PrimaryPart.CFrame.LookVector).magnitude
+				local exp = CFrame.new(beast.Character.HumanoidRootPart.CFrame.p, v.Character.HumanoidRootPart.CFrame.p)
+				local delta = (exp.LookVector - beast.Character.HumanoidRootPart.CFrame.LookVector).magnitude
 
 				local params = RaycastParams.new()
 					params.FilterType = Enum.RaycastFilterType.Blacklist
 					params.FilterDescendantsInstances = {beast.Character}
 
-				local result = workspace:Raycast(beast.Character.PrimaryPart.Position, v.Character.PrimaryPart.Position - beast.Character.PrimaryPart.Position, params) 
+				local result = workspace:Raycast(beast.Character.HumanoidRootPart.Position, v.Character.HumanoidRootPart.Position - beast.Character.HumanoidRootPart.Position, params) 
 
-				if delta < math.rad(45) and v.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and (beast.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).magnitude < 45 and result and result.Instance then
+				if delta < math.rad(45) and v.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and (beast.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude < 45 and result and result.Instance then
 					local chaser = ps:GetPlayerFromCharacter(result.Instance.Parent)
 
 					if chaser and chaser.Name == v.Name then
@@ -1184,5 +1184,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v29.41"
+version.Text = "DBD Tweaks v29.5"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
