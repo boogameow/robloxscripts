@@ -1068,8 +1068,8 @@ active.Changed:Connect(function()
 		for i, v in pairs(players:GetChildren()) do
 			if v:IsA("ImageLabel") then
 				local pl = ps:FindFirstChild(v.Name)
-				amount = amount + 1
-				agreed = agree + 1
+					amount = amount + 1
+					agreed = agreed + 1
 
 				if pl then
 					if pl.TempPlayerStatsModule.Escaped.Value == false then
