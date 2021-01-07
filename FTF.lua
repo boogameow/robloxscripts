@@ -52,7 +52,7 @@ local rushtick = tick()
 local velo = Instance.new("NumberValue")
 	velo.Value = velopower
 
-local rushtime = 3
+local rushtime = 2
 local rushing = 0
 local tokens = Instance.new("NumberValue")
 	tokens.Value = 5
@@ -706,9 +706,7 @@ local function stopchase(v)
 			add(escapedchasebp, "Boldness", "ESCAPED CHASE")
 		end
 
-		delay(.3, function()
-			add(bp, "Boldness", "CHASE")
-		end)
+		add(bp, "Boldness", "CHASE")
 	elseif beast.Name == pl.Name and chasers[v.Name] then
 		if chaseramount == 1 then
 			outtw:Play()
@@ -740,7 +738,7 @@ local function attemptchase()
 
 				local result = workspace:Raycast(beast.Character.Head.Position, v.Character.Head.Position - beast.Character.Head.Position, params) 
 
-				if delta < math.rad(45) and v.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and (beast.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude < 45 and result and result.Instance then
+				if delta < math.rad(60) and v.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and (beast.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude < 45 and result and result.Instance then
 					local chaser = ps:GetPlayerFromCharacter(result.Instance.Parent)
 
 					if chaser and chaser.Name == v.Name then
@@ -781,11 +779,11 @@ local function attemptchase()
 						end
 					end
 				end 
-
-				if chasers[v.Name] and tick() - chasers[v.Name][1] > endchasetime then
-					stopchase(v)
-				end
 			elseif chasers[v.Name] then
+				stopchase(v)
+			end
+
+			if chasers[v.Name] and tick() - chasers[v.Name][1] > endchasetime then
 				stopchase(v)
 			end
 		end
@@ -1363,5 +1361,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v30.1"
+version.Text = "DBD Tweaks v30.2"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
