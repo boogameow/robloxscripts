@@ -100,7 +100,6 @@ local frozenbp = 1000
 local gone, fade
 local queue = {}
 local musics = {"rbxassetid://4743442159", "rbxassetid://4743720538", "rbxassetid://4627984150", "rbxassetid://1410762446", "rbxassetid://6172092571"}
-local musics = {"rbxassetid://6172092571"} -- only the blight
 
 local categories = {
 	["Survival"] = {0, "rbxassetid://6100699830"};
@@ -841,6 +840,8 @@ local function makeSurvivors()
 				if player.TempPlayerStatsModule.Ragdoll.Value == true then
 					healthstate = "Knocked"
 					cl.Image = states["Knocked"]
+
+					stun()
 				elseif player.TempPlayerStatsModule.Captured.Value == true then
 					healthstate = "Captured"
 					cl.Image = states["Captured"]
@@ -1098,13 +1099,13 @@ active.Changed:Connect(function()
 
 	else 
 		escaped = false
-		chasemusic.SoundId = musics[math.random(1, #musics)]
 
 		makeSurvivors()
 		match.Visible = true
 
 		if beast.Name ~= pl.Name then
 			beast.Character:WaitForChild("Hammer").Handle.SoundChaseMusic:Destroy()
+			chasemusic.SoundId = musics[math.random(1, #musics)]
 
 			powerimage.Visible = false
 			altruism.Inside.Image = categories["Altruism"][2]
@@ -1117,15 +1118,12 @@ active.Changed:Connect(function()
 			objective.Inside.Image = categories["Brutality"][2]
 			survival.Inside.Image = categories["Deviousness"][2]
 
+			chasemusic.SoundId = "rbxassetid://6172092571"
 			velo.Value = 50
 			tokens.Value = 5
 
 			powerimage.Visible = true
 			powertokens.Text = "5"
-
-			pl.Character.Hammer.Handle.SoundHitPlayer.Played:Connect(function()
-				stun()
-			end)
 
 			curgui.BeastPowerBar:GetPropertyChangedSignal("Visible"):Wait()
 				curgui.BeastPowerBar.Visible = false
