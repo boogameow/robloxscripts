@@ -1059,13 +1059,12 @@ active.Changed:Connect(function()
 			if v:IsA("ImageLabel") then
 				local pl = ps:FindFirstChild(v.Name)
 				amount = amount + 1
+				agreed = agree + 1
 
 				if pl then
 					if pl.TempPlayerStatsModule.Escaped.Value == false then
-						agreed = agreed + 1
+						agreed = agreed - 1
 					end
-				else 
-					agreed = agreed + 1
 				end
 			end
 		end
