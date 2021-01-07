@@ -1,4 +1,5 @@
 local cas = game:GetService("ContextActionService")
+local lighting = game:GetService("Lighting")
 local serv = game:GetService("UserInputService")
 local run = game:GetService("RunService")
 local ps = game:GetService("Players")
@@ -492,6 +493,9 @@ local function stun()
 
 	rushing = 4
 	serv.MouseDeltaSensitivity = 0.05
+
+	lighting.ColorCorrection = Color3.fromRGB(0, 0, 0)
+	lighting.Brightness = -0.4
 	
 	-- make them look down or something
 	
@@ -500,6 +504,9 @@ local function stun()
 		serv.MouseDeltaSensitivity = 1
 		pl.Character.Hammer.LocalClubScript.Disabled = false
 		rushing = 0
+
+		lighting.ColorCorrection = Color3.fromRGB(255, 255, 255)
+		lighting.Brightness = 0
 		
 		tokentw = ts:Create(tokens, TweenInfo.new((5 - tokens.Value) * 2, Enum.EasingStyle.Linear), goal2)
 		tokentw:Play()
@@ -1015,6 +1022,9 @@ serv.InputBegan:Connect(function(inp, proc)
 			currentrush = rushvelocity:Clone()
 				currentrush.Parent = pl.Character.HumanoidRootPart
 
+			lighting.ColorCorrection = Color3.fromRGB(255, 100, 0)
+			lighting.Brightness = 0.1
+
 			serv.MouseDeltaSensitivity = 0.05
 			pl.Character.Hammer.LocalClubScript.Disabled = true
 			
@@ -1360,5 +1370,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v30.2"
+version.Text = "DBD Tweaks v30.3"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
