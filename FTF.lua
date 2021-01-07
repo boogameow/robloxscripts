@@ -1,3 +1,5 @@
+local cas = game:GetService("ContextActionService")
+local serv = game:GetService("UserInputService")
 local run = game:GetService("RunService")
 local ps = game:GetService("Players")
 	local pl = ps.LocalPlayer
@@ -38,9 +40,23 @@ local rescuedb = false
 local ongen = false
 local inchase = false
 local chasers = {}
+local beforesens = serv:GetMouseDelta()
+local velopower = 35
 local orig = 0
 local genprog = 0
 local endchasetime = 6
+
+local goal = {Value = 0}
+local goal2 = {Value = 5}
+local rushtick = tick()
+local velo = Instance.new("NumberValue")
+	velo.Value = velopower
+
+local rushtime = 3
+local rushing = 0
+local tokens = Instance.new("NumberValue")
+	tokens.Value = 5
+local tokentw = ts:Create(tokens, TweenInfo.new(tokens.Value * 2, Enum.EasingStyle.Linear), goal2)
 
 
 -- SURVIVOR:
@@ -84,6 +100,7 @@ local frozenbp = 1000
 local gone, fade
 local queue = {}
 local musics = {"rbxassetid://4743442159", "rbxassetid://4743720538", "rbxassetid://4627984150", "rbxassetid://1410762446", "rbxassetid://6172092571"}
+local musics = {"rbxassetid://6172092571"} -- only the blight
 
 local categories = {
 	["Survival"] = {0, "rbxassetid://6100699830"};
@@ -146,6 +163,13 @@ local death = Instance.new("Sound", gui)
 	death.Name = "Disconnect"
 	death.Volume = 1
 	death.SoundId = "rbxassetid://6187279552"
+
+local rushvelocity = Instance.new("BodyVelocity")
+	rushvelocity.MaxForce = Vector3.new(100000, 0, 100000)
+	rushvelocity.P = 3000
+	rushvelocity.Velocity = Vector3.new(0, 0, 0)
+
+local cuurrentrush = rushvelocity:Clone()
 
 local g1 = {Volume = .8}
 local g2 = {Volume = 0}
@@ -261,6 +285,30 @@ local gentext = Instance.new("TextLabel", matchdivider)
 	gentext.TextTransparency = 0.5
 	gentext.TextXAlignment = Enum.TextXAlignment.Left
 	gentext.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local powerimage = genimage:Clone()
+	powerimage.Parent = matchdivider
+	powerimage.Name = "Power"
+	powerimage.Visible = false
+	powerimage.BackgroundTransparency = 0.5
+	powerimage.BackgroundColor3 = Color3.fromRGB(60, 40, 10)
+	powerimage.Position = UDim2.new(0.35, 0, -10, 0)
+	powerimage.Size = UDim2.new(0.18, 0, 9.5, 0)
+	powerimage.Image = "rbxassetid://6202275196"
+	powerimage.ImageTransparency = 0
+
+local powertokens = Instance.new("TextLabel", powerimage)
+	powertokens.Name = "Tokens"
+	powertokens.BackgroundTransparency = 1
+	powertokens.BorderSizePixel = 0
+	powertokens.Position = UDim2.new(0.85, 0, -0.25, 0)
+	powertokens.Size = UDim2.new(0.4, 0, 0.6, 0)
+	powertokens.TextColor3 = Color3.fromRGB(255, 255, 255)
+	powertokens.Font = Enum.Font.SourceSansSemibold
+	powertokens.Text = "5"
+	powertokens.TextScaled = true
+	powertokens.TextXAlignment = Enum.TextXAlignment.Left
+	powertokens.TextYAlignment = Enum.TextYAlignment.Bottom
 
 local players = Instance.new("Frame", match)
 	players.Name = "Players"
@@ -438,6 +486,42 @@ local posts = {
 	["Brutality"] = objective;
 	["Deviousness"] = survival
 }
+
+
+local function stun()
+	if rushing == 4 or rushing == 0 then return end
+
+	rushing = 4
+	serv.MouseDeltaSensitivity = 0.05
+	
+	-- make them look down or something
+	
+	delay(2, function()
+		currentrush:Destroy()
+		serv.MouseDeltaSensitivity = 1
+		pl.Character.Hammer.LocalClubScript.Disabled = false
+		rushing = 0
+		
+		tokentw = ts:Create(tokens, TweenInfo.new((5 - tokens.Value) * 2, Enum.EasingStyle.Linear), goal2)
+		tokentw:Play()
+	end)
+end
+
+local function hitwall()
+	if rushing == 3 or tick() - rushtick < .75 then return end
+
+	local this = tokens.Value
+
+	rushing = 3
+	currentrush.Velocity = Vector3.new(0, 0, 0)
+	serv.MouseDeltaSensitivity = 1
+	
+	delay(1.5, function()
+		if rushing == 3 and tokens.Value == this then
+			stun()
+		end
+	end)
+end
 
 
 local function tangles(frame)
@@ -879,6 +963,78 @@ local function makeSurvivors()
 	end
 end
 
+run.RenderStepped:Connect(function()
+	if rushing == 1 or rushing == 5 then
+		currentrush.Velocity = pl.Character.HumanoidRootPart.CFrame.LookVector * velopower
+		
+		local touched = pl.Character.Torso:GetTouchingParts()
+		local found = false
+
+		for i, v in pairs(touched) do
+			if not v:FindFirstChildOfClass("TouchInterest") and v.Parent.Name ~= pl.Name and v.CanCollide == true then
+				found = true
+			end
+		end
+		
+		if tick() - rushtick > rushtime then
+			rushing = 2
+			velo.Value = velopower
+			ts:Create(velo, TweenInfo.new(1.5, Enum.EasingStyle.Linear), goal):Play()
+		elseif found == true then
+			hitwall()
+		end
+	elseif rushing == 2 then
+		currentrush.Velocity = pl.Character.HumanoidRootPart.CFrame.LookVector * velo.Value
+
+		local touched = pl.Character.Torso:GetTouchingParts()
+		local found = false
+
+		for i, v in pairs(touched) do
+			if not v:FindFirstChildOfClass("TouchInterest") and v.Parent.Name ~= pl.Name and v.CanCollide == true then
+				found = true
+			end
+		end
+
+		if velo.Value <= 0 then
+			stun()
+		elseif found == true then
+			hitwall()
+		end
+	end
+end)
+
+serv.InputBegan:Connect(function(inp, proc)
+	if proc then return elseif inp.UserInputType == Enum.UserInputType.MouseButton2 and beast and beast.Name == pl.Name and active.Value == true then
+		if rushing == 0 and tokens.Value == 5 then
+			local cachedtokens = math.floor(tokens.Value)
+				tokentw:Cancel()
+				tokens.Value = cachedtokens
+			
+			rushing = 1
+			rushtick = tick()
+
+			currentrush = rushvelocity:Clone()
+				currentrush.Parent = pl.Character.HumanoidRootPart
+
+			serv.MouseDeltaSensitivity = 0.05
+			pl.Character.Hammer.LocalClubScript.Disabled = true
+			
+			tokens.Value = tokens.Value - 1
+		elseif rushing == 3 and tokens.Value > 0 then
+			local cachedtokens = math.floor(tokens.Value)
+				tokentw:Cancel()
+				tokens.Value = cachedtokens
+			
+			rushing = 5
+			rushtick = tick()
+			
+			serv.MouseDeltaSensitivity = 0.05
+			pl.Character.Hammer.LocalClubScript.Disabled = false
+			
+			tokens.Value = tokens.Value - 1
+		end
+	end
+end)
 
 run.Heartbeat:Connect(attemptchase)
 
@@ -950,6 +1106,7 @@ active.Changed:Connect(function()
 		if beast.Name ~= pl.Name then
 			beast.Character:WaitForChild("Hammer").Handle.SoundChaseMusic:Destroy()
 
+			powerimage.Visible = false
 			altruism.Inside.Image = categories["Altruism"][2]
 			boldness.Inside.Image = categories["Boldness"][2]
 			objective.Inside.Image = categories["Objective"][2]
@@ -959,6 +1116,20 @@ active.Changed:Connect(function()
 			boldness.Inside.Image = categories["Hunter"][2]
 			objective.Inside.Image = categories["Brutality"][2]
 			survival.Inside.Image = categories["Deviousness"][2]
+
+			velo.Value = 50
+			tokens.Value = 5
+
+			powerimage.Visible = true
+			powertokens.Text = "5"
+
+			pl.Character.Hammer.Handle.SoundHitPlayer.Played:Connect(function()
+				stun()
+			end)
+
+			curgui.BeastPowerBar:GetPropertyChangedSignal("Visible"):Wait()
+				curgui.BeastPowerBar.Visible = false
+				cas:UnbindAction("PowerAction")
 		end
 	end
 end)
@@ -1040,6 +1211,16 @@ for i, v in pairs(ps:GetChildren()) do
 		end
 	end)
 end
+
+
+tokens.Changed:Connect(function()
+	local current = tonumber(powertokens.Text)
+	local now = math.floor(tokens.Value)
+
+	if now ~= current then
+		powertokens.Text = tostring(now)
+	end
+end)
 
 
 selfdata.Escaped.Changed:Connect(function()
@@ -1184,5 +1365,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v29.6"
+version.Text = "DBD Tweaks v30"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
