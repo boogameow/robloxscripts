@@ -1374,5 +1374,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v30.7"
+version.Text = "DBD Tweaks v31"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
