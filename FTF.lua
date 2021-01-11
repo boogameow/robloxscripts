@@ -495,7 +495,7 @@ local function stun()
 	rushing = 4
 	serv.MouseDeltaSensitivity = 0.05
 
-	colorcor.TintColor = Color3.fromRGB(0, 0, 0)
+	colorcor.TintColor = Color3.fromRGB(50, 50, 50)
 	colorcor.Brightness = -0.4
 	
 	-- make them look down or something
