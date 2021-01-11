@@ -498,7 +498,7 @@ local function stun()
 	serv.MouseDeltaSensitivity = 0.05
 	pl.Character.Hammer.LocalClubScript.Disabled = true
 
-	local b = {Brightness = -0.7}
+	local b = {Brightness = -0.8}
 	ts:Create(colorcor, TweenInfo.new(.5, Enum.EasingStyle.Linear), b):Play()
 	
 	delay(2, function()
@@ -516,7 +516,7 @@ local function stun()
 end
 
 local function hitwall()
-	if rushing == 3 or tick() - rushtick < .5 then return end
+	if rushing == 3 or tick() - rushtick < .3 then return end
 
 	currentrush.Velocity = Vector3.new(0, 0, 0)
 
@@ -1390,5 +1390,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v31.1"
+version.Text = "DBD Tweaks v31.2"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
