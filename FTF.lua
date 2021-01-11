@@ -495,10 +495,7 @@ local function stun()
 	rushing = 4
 	serv.MouseDeltaSensitivity = 0.05
 
-	colorcor.TintColor = Color3.fromRGB(50, 50, 50)
 	colorcor.Brightness = -0.4
-	
-	-- make them look down or something
 	
 	delay(2, function()
 		currentrush:Destroy()
@@ -506,7 +503,6 @@ local function stun()
 		pl.Character.Hammer.LocalClubScript.Disabled = false
 		rushing = 0
 
-		colorcor.TintColor = Color3.fromRGB(255, 255, 255)
 		colorcor.Brightness = 0
 		
 		tokentw = ts:Create(tokens, TweenInfo.new((5 - tokens.Value) * 2, Enum.EasingStyle.Linear), goal2)
@@ -1023,9 +1019,6 @@ serv.InputBegan:Connect(function(inp, proc)
 			currentrush = rushvelocity:Clone()
 				currentrush.Parent = pl.Character.HumanoidRootPart
 
-			colorcor.TintColor = Color3.fromRGB(255, 100, 0)
-			colorcor.Brightness = 0.1
-
 			serv.MouseDeltaSensitivity = 0.05
 			pl.Character.Hammer.LocalClubScript.Disabled = true
 			
@@ -1371,5 +1364,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v30.5"
+version.Text = "DBD Tweaks v30.6"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
