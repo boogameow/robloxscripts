@@ -1053,7 +1053,13 @@ end)
 run.Heartbeat:Connect(attemptchase)
 
 if active.Value == false then
-	status.Text = "Intermission"
+	local new = gamestatus.Value 
+
+	if string.split(new, " ")[1] == "15" then
+		status.Text = "Head Start"
+	else 
+		status.Text = "Intermission"
+	end
 else 
 	match.Visible = true
 
