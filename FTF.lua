@@ -495,13 +495,13 @@ local function stun()
 	if rushing == 4 or rushing == 0 then return end
 
 	rushing = 4
-	serv.MouseDeltaSensitivity = 0.05
+	serv.MouseDeltaSensitivity = 0.03
 	pl.Character.Hammer.LocalClubScript.Disabled = true
 
-	local b = {Brightness = -0.8}
+	local b = {Brightness = -1}
 	ts:Create(colorcor, TweenInfo.new(.5, Enum.EasingStyle.Linear), b):Play()
 	
-	delay(2, function()
+	delay(2.5, function()
 		currentrush:Destroy()
 		serv.MouseDeltaSensitivity = 1
 		pl.Character.Hammer.LocalClubScript.Disabled = false
@@ -1030,7 +1030,7 @@ serv.InputBegan:Connect(function(inp, proc)
 			currentrush = rushvelocity:Clone()
 				currentrush.Parent = pl.Character.HumanoidRootPart
 
-			serv.MouseDeltaSensitivity = 0.05
+			serv.MouseDeltaSensitivity = 0.03
 			pl.Character.Hammer.LocalClubScript.Disabled = true
 			
 			tokens.Value = tokens.Value - 1
@@ -1042,7 +1042,7 @@ serv.InputBegan:Connect(function(inp, proc)
 			rushing = 5
 			rushtick = tick()
 			
-			serv.MouseDeltaSensitivity = 0.05
+			serv.MouseDeltaSensitivity = 0.03
 			pl.Character.Hammer.LocalClubScript.Disabled = false
 			
 			tokens.Value = tokens.Value - 1
@@ -1390,5 +1390,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v31.2"
+version.Text = "DBD Tweaks v31.3"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
