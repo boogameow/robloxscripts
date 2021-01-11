@@ -21,6 +21,7 @@ local rep = game:GetService("ReplicatedStorage")
 	local gens = rep.ComputersLeft
 	local timeleft = rep.GameTimer
 	local map = rep.CurrentMap
+	local gamestatus = rep.GameStatus
 
 local tangling = false
 local fastang = TweenInfo.new(.2, Enum.EasingStyle.Linear)
@@ -1337,6 +1338,15 @@ map.Changed:Connect(function()
 end)
 
 
+gamestatus.Changed:Connect(function()
+	local new = gamestatus.Value 
+
+	if string.split(new, " ")[1] == "15" then
+		status.Text = "Head Start"
+	end
+end)
+
+
 gens.Changed:Connect(function()
 	if active.Value ~= true then return end
 
@@ -1374,5 +1384,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v31"
+version.Text = "DBD Tweaks v31.1"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
