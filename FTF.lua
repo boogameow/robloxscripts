@@ -46,7 +46,7 @@ local beforesens = serv:GetMouseDelta()
 local velopower = 35
 local orig = 0
 local genprog = 0
-local endchasetime = 6
+local endchasetime = 8
 
 local goal = {Value = 0}
 local goal2 = {Value = 5}
