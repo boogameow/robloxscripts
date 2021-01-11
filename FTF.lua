@@ -513,10 +513,16 @@ end
 local function hitwall()
 	if rushing == 3 or tick() - rushtick < .75 then return end
 
+	currentrush.Velocity = Vector3.new(0, 0, 0)
+
+	if tokens.Value == 0 then
+		stun()
+		return
+	end
+
 	local this = tokens.Value
 
 	rushing = 3
-	currentrush.Velocity = Vector3.new(0, 0, 0)
 	serv.MouseDeltaSensitivity = 1
 	
 	delay(1.5, function()
