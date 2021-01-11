@@ -498,7 +498,7 @@ local function stun()
 	serv.MouseDeltaSensitivity = 0.05
 	pl.Character.Hammer.LocalClubScript.Disabled = true
 
-	local b = {Brightness = -0.5}
+	local b = {Brightness = -0.7}
 	ts:Create(colorcor, TweenInfo.new(.5, Enum.EasingStyle.Linear), b):Play()
 	
 	delay(2, function()
