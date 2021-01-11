@@ -511,7 +511,7 @@ local function stun()
 end
 
 local function hitwall()
-	if rushing == 3 or tick() - rushtick < .75 then return end
+	if rushing == 3 or tick() - rushtick < .5 then return end
 
 	currentrush.Velocity = Vector3.new(0, 0, 0)
 
