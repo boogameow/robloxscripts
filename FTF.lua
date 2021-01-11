@@ -504,6 +504,7 @@ local function stun()
 	delay(2.5, function()
 		currentrush:Destroy()
 		serv.MouseDeltaSensitivity = 1
+		pl.Character.Humanoid.WalkSpeed = 16
 		pl.Character.Hammer.LocalClubScript.Disabled = false
 		rushing = 0
 
