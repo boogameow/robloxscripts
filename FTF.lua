@@ -744,7 +744,7 @@ local function attemptchase()
 		for i, v in pairs(ps:GetChildren()) do
 			local data = v:FindFirstChild("TempPlayerStatsModule")
 
-			if data and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and data.Escaped.Value == false and data.Captured.Value == false and data.Ragdoll.Value == false and data.Health.Value > 0 and beast.Name ~= v.Name then
+			if data and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and data.Escaped.Value == false and data.Captured.Value == false and data.Ragdoll.Value == false and data.Health.Value > 0 and beast and beast.Name ~= v.Name and beast.Character:FindFirstChild("HumanoidRootPart") then
 				local exp = CFrame.new(beast.Character.HumanoidRootPart.CFrame.p, v.Character.HumanoidRootPart.CFrame.p)
 				local delta = (exp.LookVector - beast.Character.HumanoidRootPart.CFrame.LookVector).magnitude
 
