@@ -83,8 +83,8 @@ local protectionbp = 500
 -- KILLER:
 -- deviousness
 local alldeadbp = 2500
-local startdashbp = 350 -- need to figure these out
-local dashdownbp = 750 -- ^
+local dashdownbp = 750
+local rushbp = 400
 
 -- brutality
 local hitbp = 500
@@ -519,6 +519,7 @@ end
 local function hitwall()
 	if rushing == 3 or tick() - rushtick < .3 then return end
 
+	add(foundbp, "Deviousness", "Rush")
 	currentrush.Velocity = Vector3.new(0, 0, 0)
 
 	if tokens.Value == 0 then
@@ -625,6 +626,8 @@ end
 local function add(points, cat, action)
 	local points = math.clamp(points, 0, 8000)
 	points = math.floor(points)
+
+	action = string.upper(action)
 
 	if points <= 0 then return end
 
@@ -854,8 +857,6 @@ local function makeSurvivors()
 				if player.TempPlayerStatsModule.Ragdoll.Value == true then
 					healthstate = "Knocked"
 					cl.Image = states["Knocked"]
-
-					stun()
 				elseif player.TempPlayerStatsModule.Captured.Value == true then
 					healthstate = "Captured"
 					cl.Image = states["Captured"]
@@ -893,6 +894,11 @@ local function makeSurvivors()
 
 								if beast.Name == pl.Name then
 									add(hitbp, "Brutality", "HIT")
+
+									if rushing ~= 0 then
+										add(foundbp, "Deviousness", "Rush Hit")
+										stun()
+									end
 								end
 							elseif state.Value == false and healthstate == "Knocked" then
 								healthstate = "Healthy"
@@ -1391,5 +1397,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v31.3"
+version.Text = "DBD Tweaks v31.4"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
