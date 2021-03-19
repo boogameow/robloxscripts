@@ -84,13 +84,13 @@ local protectionbp = 500
 -- deviousness
 local alldeadbp = 2500
 local dashdownbp = 750
-local rushbp = 400
+local rushbp = 150 -- per rush
 
 -- brutality
 local hitbp = 500
 local quitterbp = 750
 
--- hunter [not started]
+-- hunter
 local foundbp = 250
 local beastchasebp = chasebp / 1.3
 
@@ -494,6 +494,8 @@ local posts = {
 local function stun()
 	if rushing == 4 or rushing == 0 then return end
 
+	add(rushbp * (5 - tokens.Value), "Deviousness", "Rush")
+
 	rushing = 4
 	serv.MouseDeltaSensitivity = 0.03
 	pl.Character.Hammer.LocalClubScript.Disabled = true
@@ -513,29 +515,6 @@ local function stun()
 		
 		tokentw = ts:Create(tokens, TweenInfo.new((5 - tokens.Value) * 2, Enum.EasingStyle.Linear), goal2)
 		tokentw:Play()
-	end)
-end
-
-local function hitwall()
-	if rushing == 3 or tick() - rushtick < .3 then return end
-
-	add(foundbp, "Deviousness", "Rush")
-	currentrush.Velocity = Vector3.new(0, 0, 0)
-
-	if tokens.Value == 0 then
-		stun()
-		return
-	end
-
-	local this = tokens.Value
-
-	rushing = 3
-	serv.MouseDeltaSensitivity = 1
-	
-	delay(1.5, function()
-		if rushing == 3 and tokens.Value == this then
-			stun()
-		end
 	end)
 end
 
@@ -706,6 +685,27 @@ local function add(points, cat, action)
 	
 end
 
+local function hitwall()
+	if rushing == 3 or tick() - rushtick < .3 then return end
+
+	currentrush.Velocity = Vector3.new(0, 0, 0)
+
+	if tokens.Value == 0 then
+		stun()
+		return
+	end
+
+	local this = tokens.Value
+
+	rushing = 3
+	serv.MouseDeltaSensitivity = 1
+	
+	delay(1.5, function()
+		if rushing == 3 and tokens.Value == this then
+			stun()
+		end
+	end)
+end
 
 local function stopchase(v)
 	local chaseramount = 0
@@ -747,9 +747,12 @@ local function attemptchase()
 		for i, v in pairs(ps:GetChildren()) do
 			local data = v:FindFirstChild("TempPlayerStatsModule")
 
-			if data and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and data.Escaped.Value == false and data.Captured.Value == false and data.Ragdoll.Value == false and data.Health.Value > 0 and beast and beast.Name ~= v.Name and beast.Character:FindFirstChild("HumanoidRootPart") then
-				local exp = CFrame.new(beast.Character.HumanoidRootPart.CFrame.p, v.Character.HumanoidRootPart.CFrame.p)
-				local delta = (exp.LookVector - beast.Character.HumanoidRootPart.CFrame.LookVector).magnitude
+			if data and v.Character and v.Character:FindFirstChild("Head") and data.Escaped.Value == false and data.Captured.Value == false and data.Ragdoll.Value == false and data.Health.Value > 0 and beast and beast.Name ~= v.Name and beast.Character:FindFirstChild("Head") then
+				local beasthead = beast.Character.Head
+				local survhead = v.Character.Head
+
+				local mag = (beasthead.Position - beasthead.Position).magnitude
+				local dot = beasthead.CFrame.LookVector:Dot(survhead.Position - beasthead.Position)
 
 				local params = RaycastParams.new()
 					params.FilterType = Enum.RaycastFilterType.Blacklist
@@ -757,7 +760,7 @@ local function attemptchase()
 
 				local result = workspace:Raycast(beast.Character.Head.Position, v.Character.Head.Position - beast.Character.Head.Position, params) 
 
-				if delta < math.rad(60) and (beast.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude < 45 and result and result.Instance then
+				if dot > 0 and mag < 45 and result and result.Instance and v.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) and beast.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
 					local chaser = ps:GetPlayerFromCharacter(result.Instance.Parent)
 
 					if chaser and chaser.Name == v.Name then
@@ -1397,5 +1400,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v31.4"
+version.Text = "DBD Tweaks v32"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
