@@ -2,7 +2,6 @@
 
 local nick = "" -- custom name
 
-
 -- vars
 local hdb, hdbb, gui
 local ps = game:GetService("Players")
@@ -57,17 +56,16 @@ local function sp()
     if sbp.Value == true then return end
 
     upd:FireServer(sbp, true)
-    delay(3, function() upd:FireServer(sbp, false) end)
-end
 
+    delay(3, function() 
+        upd:FireServer(sbp, false) 
+    end)
+end
 
 local function noCD() 
 	dsu.Value = false 
 	exh.Value = false 
 end
-dsu.Changed:connect(noCD)
-exh.Changed:connect(noCD)
-
 
 local function balancedlanding()
     if lan.Value == false then return end
@@ -79,9 +77,6 @@ local function balancedlanding()
     sp()
 end
 
-lan.Changed:Connect(balancedlanding)
-
-
 local function customchase()
     if bc.Value == true then return end
 
@@ -91,9 +86,6 @@ local function customchase()
     ch.SoundId = ids[math.random(1, #ids)]
     table.insert(ids, cach)
 end
-
-bc.Changed:Connect(customchase)
-
 
 local function adrenaline()
     if gens.Value ~= 5 then return end
@@ -108,7 +100,10 @@ local function adrenaline()
 end
 
 gens.Changed:Connect(adrenaline)
-
+bc.Changed:Connect(customchase)
+lan.Changed:Connect(balancedlanding)
+dsu.Changed:connect(noCD)
+exh.Changed:connect(noCD)
 
 bro.Value = false
 loadstring(game:HttpGet(('https://pastebin.com/raw/z7QBADVb'),true))() -- esp
@@ -117,13 +112,11 @@ if nick ~= "" then
     upd:FireServer(nn, nick) 
 end
 
-
 for i, q in pairs(perks:GetChildren()) do 
     if perklist[q.Value] then 
         q.Value = perklist[q.Value] 
     end 
 end
-
 
 -- gui stuff
 gui = Instance.new("ScreenGui")
@@ -141,7 +134,6 @@ first = Instance.new("TextLabel", gui)
     first.Position = UDim2.new(0, 0, 0.35, 0)
     first.Size = UDim2.new(0.15, 0, 0.05, 0)
 prev = first.Position
-
 
 -- keycodes
 local codes = {
@@ -219,7 +211,6 @@ local codes = {
     end, "Reset all pallets."};
 }
 
-
 -- create guis
 for i, v in pairs(codes) do
     local letter = string.split(tostring(i), ".")[3]
@@ -235,7 +226,6 @@ for i, v in pairs(codes) do
 end
 
 gui.Parent = p.PlayerGui
-
 
 -- handle input
 inps.InputBegan:connect(function(inp, proc)
