@@ -1,10 +1,15 @@
 local cas = game:GetService("ContextActionService")
 local run = game:GetService("RunService")
 local cam = workspace.CurrentCamera
-local folder, blacklist
+local folder, trinketlist
 
-if game.PlaceId == 5529195348 then -- rogue spells
-    blacklist = {"Old Fragment", "Ring", "Amulet", "Sapphire"}
+if not syn then
+    warn("Trinket ESP requires Synapse.")
+    return
+end
+
+if game.PlaceId ~= 5529195348 then -- rogue spells
+    trinketlist = {"Old Fragment", "Ring", "Amulet", "Sapphire"}
     folder = workspace:WaitForChild("Items")
 else 
     warn("This game is not on the whitelist!")
@@ -13,7 +18,7 @@ end
 
 local trinkets = {}
 local range = 500
-local active = false
+local active = true
 
 local function toggle(n, st)
     if st == Enum.UserInputState.Begin then
@@ -35,13 +40,7 @@ local function destroy(part)
     end
 
     for i, v in pairs(trinkets) do
-        local part2 = v.Part
-
-        if part2:IsA("Model") then
-            part2 = part2:FindFirstChildOfClass("Part")
-        end
-
-        if pos == part2.Position and part.Name == v.Part.Name then
+        if pos == v.Part.Position and part.Name == v.Part.Name then
             v.Drawing:Remove()
             trinkets[i] = nil
             return
@@ -64,33 +63,29 @@ local function create(part)
         label.Position = Vector2.new(0, 0)
         label.Transparency = 0
     
-    if table.find(blacklist, part.Name) then
+    if table.find(trinketlist, part.Name) then
         label.Color = Color3.fromRGB(0, 255, 255)
     else 
         label.Color = Color3.fromRGB(255, 0, 0)
         artifact = true
     end
 
-    table.insert(trinkets, #trinkets + 1, {Part = part, Drawing = label, Artifact = artifact})
+    if part:IsA("Model") then 
+        part = part:FindFirstChildOfClass("Part")
+    end
+
+    table.insert(trinkets, #trinkets + 1, {Part = part, Drawing = label, Unique = artifact})
 end
 
 run.RenderStepped:Connect(function()
     if active == true then 
         for i, v in pairs(trinkets) do
-            local part
-
-            if v.Part:IsA("Model") then 
-                part = v.Part:FindFirstChildOfClass("Part")
-            else 
-                part = v.Part
-            end
-
-            local pos, onscreen = cam:WorldToViewportPoint(part.Position)
+            local pos, onscreen = cam:WorldToViewportPoint(v.Part.Position)
 
             if onscreen then
-                local mag = (cam.CFrame.Position - part.Position).magnitude
+                local mag = (cam.CFrame.Position - v.Part.Position).magnitude
 
-                if v.Artifact == true then
+                if v.Unique == true then
                     v.Drawing.Position = Vector2.new(pos.X, pos.Y)
                     v.Drawing.Text = v.Part.Name .. " (" .. tostring(math.floor(mag + 0.5)) .. ")"
                     v.Drawing.Transparency = 1
@@ -117,3 +112,5 @@ end
 folder.ChildAdded:Connect(create)
 folder.ChildRemoved:Connect(destroy)
 cas:BindAction("Caption", toggle, false, Enum.KeyCode.F1)
+
+print("Trinket ESP has been initialized.")
