@@ -1,11 +1,9 @@
-local pl = game:GetService("Players").LocalPlayer
 local cas = game:GetService("ContextActionService")
 local run = game:GetService("RunService")
 local cam = workspace.CurrentCamera
 local folder, blacklist
 
-if game.PlaceId == 5529195348 then
-    -- rogue spells
+if game.PlaceId == 5529195348 then -- rogue spells
     blacklist = {"Old Fragment", "Ring", "Amulet", "Sapphire"}
     folder = workspace:WaitForChild("Items")
 else 
@@ -79,16 +77,18 @@ end
 run.RenderStepped:Connect(function()
     if active == true then 
         for i, v in pairs(trinkets) do
-            local part 
+            local part
 
             if v.Part:IsA("Model") then 
                 part = v.Part:FindFirstChildOfClass("Part")
+            else 
+                part = v.Part
             end
 
             local pos, onscreen = cam:WorldToViewportPoint(part.Position)
 
-            if onscreen and pl.Character then
-                local mag = (pl.Character.HumanoidRootPart.Position - part.Position).magnitude
+            if onscreen then
+                local mag = (cam.CFrame.Position - part.Position).magnitude
 
                 if v.Artifact == true then
                     v.Drawing.Position = Vector2.new(pos.X, pos.Y)
