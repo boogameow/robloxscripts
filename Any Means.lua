@@ -7,6 +7,11 @@ local update = rep:WaitForChild("RemoteEvents"):WaitForChild("PropertieUpdater")
 local cas = game:GetService("ContextActionService")
 local pl = game:GetService("Players").LocalPlayer
 
+if cas:GetBoundActionInfo("AMN").inputTypes then
+	warn("Any Means is already running!")
+	return
+end
+
 local pallets = {}
 
 for i, v in pairs(workspace:GetChildren()) do
