@@ -4,7 +4,7 @@ if not syn then
 end
 
 local cam = workspace.CurrentCamera
-local pl = game:GetService("Players").LocalPlayer
+local ps = game:GetService("Players")
 local coregui = game:GetService("CoreGui")
 	local screen = coregui:WaitForChild("RobloxGui")
 	local frame = screen:WaitForChild("PlayerListMaster"):WaitForChild("OffsetFrame"):WaitForChild("PlayerScrollList"):WaitForChild("SizeOffsetFrame"):WaitForChild("ScrollingFrameContainer")
