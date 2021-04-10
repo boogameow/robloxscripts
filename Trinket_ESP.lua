@@ -8,7 +8,7 @@ if not syn then
     return
 end
 
-if game.PlaceId ~= 5529195348 then -- rogue spells
+if game.PlaceId == 5529195348 then -- rogue spells
     trinketlist = {"Old Fragment", "Ring", "Amulet", "Sapphire"}
     folder = workspace:WaitForChild("Items")
 else 
