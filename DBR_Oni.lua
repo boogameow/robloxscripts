@@ -35,7 +35,7 @@ local orbdroptime = 4
 local orbgrabdistance = 15
 local orbgrabtime = 1.25
 local orbgrabcharges = 5
-local furylength = 45
+local furylength = 50
 
 -- independent variables
 local visible = false
@@ -69,10 +69,16 @@ local furysound = Instance.new("Sound", int)
 	furysound.Volume = 5
 	furysound.PlaybackSpeed = 0.95
 
+local activesound = Instance.new("Sound", int)
+	activesound.Name = "Fury Active"
+	activesound.SoundId = "rbxassetid://5912251061"
+	activesound.Volume = 0
+	activesound.Looped = true
+
 local endsound = Instance.new("Sound", int)
 	endsound.Name = "Fury Ended"
 	endsound.SoundId = "rbxassetid://5591296905"
-	endsound.Volume = 6
+	endsound.Volume = 8
 
 -- ability circle
 local rad = Instance.new("ImageLabel", int)
@@ -259,7 +265,12 @@ local function activatePower(_, st)
 		char.Humanoid.WalkSpeed = 3
 		allowAttacking(false)
 		meterlabel.Text = "Activating Fury"
+
+		activesound.Volume = 0
+		activesound:Play()
+
 		ts:Create(fillbar, TweenInfo.new(2, Enum.EasingStyle.Linear), {BackgroundColor3 = Color3.fromRGB(255, 0, 0)}):Play()
+		ts:Create(activesound, TweenInfo.new(5, Enum.EasingStyle.Linear), {Volume = 0.85}):Play()
 
 		furysound:Play()
 		furysound.Ended:Wait()
@@ -271,12 +282,18 @@ local function activatePower(_, st)
 
 		ts:Create(fillbar, TweenInfo.new(furylength, Enum.EasingStyle.Linear), {Size = UDim2.new(0, 0, 1, 0), BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
 
-		delay(furylength, function()
-			endsound:Play()
-			powercharges = 0
-			meterlabel.Text = "Blood Meter"
-			meterlabel.Font = Enum.Font.GothamSemibold
-			powerstate = ""
+		delay(furylength - 1, function()
+			ts:Create(activesound, TweenInfo.new(1, Enum.EasingStyle.Linear), {Volume = 0}):Play()
+
+			delay(1, function()
+				activesound:Stop()
+
+				endsound:Play()
+				powercharges = 0
+				meterlabel.Text = "Blood Meter"
+				meterlabel.Font = Enum.Font.GothamSemibold
+				powerstate = ""
+			end)
 		end)
 	end
 end
@@ -304,6 +321,8 @@ for i, v in pairs(ps:GetChildren()) do
 	end
 end
 
+-- the actual oni turning
+
 local mt = getrawmetatable(game)
 local oldcall = mt.__namecall
 
@@ -322,5 +341,10 @@ end)
 
 setreadonly(mt, true)
 
+-- keybinds
+
 cas:BindAction("Absorb", absorb, false, Enum.KeyCode.LeftControl)
 cas:BindAction("Fury", activatePower, false, Enum.KeyCode.R)
+
+-- misc
+gui.AmbientSounds.Chase1.SoundId = "rbxassetid://4627984150"
