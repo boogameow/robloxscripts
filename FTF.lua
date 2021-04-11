@@ -603,12 +603,11 @@ end
 
 
 local function add(points, cat, action)
-	local points = math.clamp(points, 0, 8000)
-	points = math.floor(points)
+	local points = math.floor(math.clamp(points, 0, 8000))
 
 	action = string.upper(action)
 
-	if points <= 0 then return end
+	if points <= 1 then return end
 
 	local cl = award:Clone()
 		cl.Category.Image = categories[cat][2]
