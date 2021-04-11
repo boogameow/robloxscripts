@@ -138,14 +138,22 @@ prev = first.Position
 -- keycodes
 local codes = {
     [Enum.KeyCode.M] = {function()
-        if gui.Enabled == false then gui.Enabled = true else gui.Enabled = false end
+        gui.Enabled = not gui.Enabled
     end, "Toggle Gui."};
     [Enum.KeyCode.H] = {function()
-        local k = mat.Players["Player(V)"]; if not ps:FindFirstChild(k.Value) then return end
-        local stun = ps[k.Value].Backpack.Scripts.values.Stunned; upd:FireServer(stun, true)
+        local k = mat.Players["Player(V)"]
+        local kpl = ps:FindFirstChild(k.Value)
+
+        if not kpl then
+            return
+        else 
+            upd:FireServer(kpl.Backpack.Scripts.values.Stunned, true)
+        end
     end, "Stun the killer."};
     [Enum.KeyCode.V] = {function()
-        if gens.Value ~= 5 then upd:FireServer(gens, gens.Value + 1) end
+        if gens.Value < 5 then 
+            upd:FireServer(gens, gens.Value + 1) 
+        end
     end, "Pop one gen."};
     [Enum.KeyCode.Z] = {function()
         if btp.Value == true and hs.Value == 1 then 
@@ -180,6 +188,7 @@ local codes = {
         if gens.Value < 2 then 
             upd:FireServer(gens, 2) 
         end 
+
         local thingy = {}
 
         for i, q in pairs(mat.Players:GetChildren()) do 
@@ -191,6 +200,7 @@ local codes = {
 
         delay(2, function()
             c.HumanoidRootPart.CFrame = workspace.Hatch.HumanoidRootPart.CFrame
+
             for i, v in ipairs(thingy) do 
                 upd:FireServer(v.Connected, true) 
             end
@@ -200,13 +210,18 @@ local codes = {
         if hdbb then return end
 
         hdbb = true
+
         for i, v in pairs(workspace:GetChildren()) do 
-            if string.match(v.Name, "Hook") and v:FindFirstChild("Panel") then upd:FireServer(v.Panel.Used, true) end 
+            if string.match(v.Name, "Hook") and v:FindFirstChild("Panel") then 
+                upd:FireServer(v.Panel.Used, true) 
+            end 
         end
     end, "Break all hooks."};
     [Enum.KeyCode.B] = {function()
         for i, v in pairs(workspace:GetChildren()) do 
-            if string.match(v.Name, "Pallet") then upd:FireServer(v.Panel.State, 0) end 
+            if string.match(v.Name, "Pallet") then 
+                upd:FireServer(v.Panel.State, 0) 
+            end 
         end
     end, "Reset all pallets."};
 }
