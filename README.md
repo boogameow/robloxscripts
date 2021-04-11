@@ -4,8 +4,8 @@ This is just the scripts that I work on actively. Any script you see here is mad
 Loadstring:
 
 ```lua
-local branch = "master" -- master = random scripts, dbr = dead by roblox scripts.
-local scriptname = "" -- the name of the script duh 
+local branch = "dbr" -- master = random scripts, dbr = dead by roblox scripts.
+local scriptname = "Oni" -- name of the script, EXCLUDE FILE TYPE.
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/boogameow/scripts/' .. branch .. '/' .. scriptname))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/boogameow/scripts/' .. branch .. '/' .. scriptname .. '.lua'))()
 ```
