@@ -4,6 +4,7 @@ local nick = "" -- custom name
 
 -- vars
 local hdb, hdbb, gui
+local cgui = game:GetService("CoreGui")
 local ps = game:GetService("Players")
     local p = ps.LocalPlayer
         local pn = p.Name
@@ -118,10 +119,10 @@ for i, q in pairs(perks:GetChildren()) do
 end
 
 -- gui stuff
-gui = Instance.new("ScreenGui")
+local gui = Instance.new("ScreenGui")
     gui.Name = "Ultimate"
     gui.ResetOnSpawn = false
-first = Instance.new("TextLabel", gui)
+local first = Instance.new("TextLabel", gui)
     first.Name = "Main"
     first.BackgroundTransparency = 1
     first.BorderSizePixel = 0
@@ -132,7 +133,8 @@ first = Instance.new("TextLabel", gui)
     first.TextColor3 = Color3.fromRGB(235, 238, 9)
     first.Position = UDim2.new(0, 0, 0.35, 0)
     first.Size = UDim2.new(0.15, 0, 0.05, 0)
-prev = first.Position
+
+local prev = first.Position
 
 -- keycodes
 local codes = {
@@ -239,7 +241,8 @@ for i, v in pairs(codes) do
     prev = text.Position
 end
 
-gui.Parent = p.PlayerGui
+syn.protect_gui(gui)
+gui.Parent = cgui
 
 -- handle input
 inps.InputBegan:Connect(function(inp, proc)
