@@ -36,7 +36,7 @@ local ps = game:GetService("Players")
                     local hs = val.HealthState
                     local bc = val.BeingChased
 
-local blacklist = {"Player(V)", "Count", "PlayersScaped", pn, "")
+local blacklist = {"Player(V)", "Count", "PlayersScaped", pn, ""}
 
 local perklist = {
     Unbreakable = "DeadHard",
