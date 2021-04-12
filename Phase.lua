@@ -5,6 +5,8 @@ local lighting = game:GetService("Lighting")
 
 local rep = game:GetService("ReplicatedStorage")
 local remote = rep:WaitForChild("RemoteEvents"):WaitForChild("TestHandler")
+local matchpl = rep:WaitForChild("Match"):WaitForChild("Players")
+local killer = matchpl:WaitForChild("Player(V)")
 
 local pl = game:GetService("Players").LocalPlayer
 	local char = pl.Character or pl.CharacterAdded:Wait()
@@ -15,7 +17,11 @@ if cas:GetBoundActionInfo("Phase").inputTypes then
 	return
 end
 
-local phasing, con = false, nil
+if killer.Value == "" then
+	killer.Changed:Wait()
+end
+
+local phasing, iskiller, con = false, (killer.Value == pl.Name), nil
 
 local sound = Instance.new("Sound", coregui)
 	sound.SoundId = "rbxassetid://362395087"
@@ -65,8 +71,11 @@ local function togglephase(_, st, inp)
 
 		 	husk.CFrame = char.HumanoidRootPart.CFrame
 		 	velo.Velocity = char.Humanoid.MoveDirection * 16
-		 	lathandler.Disabled = true
 		 	husk.Parent = workspace
+
+		 	if iskiller == true then
+		 		lathandler.Disabled = true
+		 	end
 
 		 	con = run.RenderStepped:Connect(function()
 		 		remote:FireServer(husk.CFrame)
@@ -77,15 +86,36 @@ local function togglephase(_, st, inp)
 		 		con = nil
 		 	end
 
-		 	phasing = false
+		 	if iskiller == true then
+		 		lathandler.Disabled = false
+		 	end
 
-			sound:Stop()
+		 	sound:Stop()
+		 	
+		 	phasing = false
 		 	cor.Enabled = false
-		 	lathandler.Disabled = false
 		 	velo.Velocity = Vector3.new(0, 0, 0)
 		 	husk.Parent = nil
 		 end
 	end
 end
+
+local GameMt = getrawmetatable(game)
+local OldNameCall = GameMt.__namecall
+
+setreadonly(GameMt, false)
+
+GameMt.__namecall = newcclosure(function(Self, ...)
+    local Args = {...}
+    local NamecallMethod = getnamecallmethod()
+
+    if not checkcaller() and NamecallMethod == "FireServer" and Self.Name == "TestHandler" and iskiller == false and phasing == true then
+        return nil
+    end
+
+    return OldNameCall(Self, ...)
+end)
+
+setreadonly(GameMt, true)
 
 cas:BindAction("Phase", togglephase, false, Enum.KeyCode.Q)
