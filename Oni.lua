@@ -43,7 +43,7 @@ local orbdroptime = 4
 local orbgrabdistance = 15
 local orbgrabtime = 1
 local orbgrabcharges = 5
-local furylength = 50
+local furylength = 60
 
 -- independent variables
 local powercharges = 0
