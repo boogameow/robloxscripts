@@ -83,7 +83,7 @@ local furysound = Instance.new("Sound", int)
 	furysound.Volume = 5.5
 
 local activesound = Instance.new("Sound", int)
-	activesound.SoundId = "rbxassetid://5912251061"
+	activesound.SoundId = "rbxassetid://288066605" -- old sound: 5912251061
 	activesound.Volume = 0
 	activesound.Looped = true
 
