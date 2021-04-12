@@ -199,12 +199,8 @@ local codes = {
             end 
         end
 
-        delay(2, function()
+        delay(1.25, function()
             c.HumanoidRootPart.CFrame = workspace.Hatch.HumanoidRootPart.CFrame
-
-            for i, v in ipairs(thingy) do 
-                upd:FireServer(v.Connected, true) 
-            end
         end)
     end, "Open hatch."};
     [Enum.KeyCode.X] = {function()
