@@ -57,7 +57,7 @@ local label = Instance.new("TextLabel", bill)
 
 local function togglephase(_, st, inp)
 	if st == Enum.UserInputState.Begin then
-		 if inp.KeyCode == Enum.KeyCode.F1 and phasing == false then
+		 if phasing == false then
 		 	phasing = true
 
 		 	sound:Play()
@@ -71,7 +71,7 @@ local function togglephase(_, st, inp)
 		 	con = run.RenderStepped:Connect(function()
 		 		remote:FireServer(husk.CFrame)
 		 	end)
-		 elseif inp.KeyCode == Enum.KeyCode.F2 and phasing == true then
+		 elseif phasing == true then
 		 	if con then
 		 		con:Disconnect()
 		 		con = nil
@@ -88,4 +88,4 @@ local function togglephase(_, st, inp)
 	end
 end
 
-cas:BindAction("Phase", togglephase, false, Enum.KeyCode.F1, Enum.KeyCode.F2)
+cas:BindAction("Phase", togglephase, false, Enum.KeyCode.Q)
