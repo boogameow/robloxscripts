@@ -80,9 +80,9 @@ end
 local function customchase()
     if bc.Value == true then return end
 
-    local cach = ch.SoundId; 
+    local cach = ch.SoundId
+    
     table.remove(ids, table.find(ids, cach), cach)
-
     ch.SoundId = ids[math.random(1, #ids)]
     table.insert(ids, cach)
 end
@@ -95,15 +95,14 @@ local function adrenaline()
     end
 
     upd:FireServer(btp, false)
-
     sp()
 end
 
 gens.Changed:Connect(adrenaline)
 bc.Changed:Connect(customchase)
 lan.Changed:Connect(balancedlanding)
-dsu.Changed:connect(noCD)
-exh.Changed:connect(noCD)
+dsu.Changed:Connect(noCD)
+exh.Changed:Connect(noCD)
 
 bro.Value = false
 loadstring(game:HttpGet(('https://pastebin.com/raw/z7QBADVb'),true))() -- esp
@@ -243,8 +242,7 @@ end
 gui.Parent = p.PlayerGui
 
 -- handle input
-inps.InputBegan:connect(function(inp, proc)
+inps.InputBegan:Connect(function(inp, proc)
     if proc or not codes[inp.KeyCode] then return end
-    
     codes[inp.KeyCode][1]()
 end)
