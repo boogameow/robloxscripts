@@ -6,7 +6,6 @@ local ts = game:GetService("TweenService")
 local lighting = game:GetService("Lighting")
 
 local rep = game:GetService("ReplicatedStorage")
-	local kstuff = rep:WaitForChild("KillerStuff")
 	local matchpl = rep:WaitForChild("Match"):WaitForChild("Players")
 	local killer = matchpl:WaitForChild("Player(V)")
 
@@ -52,8 +51,11 @@ local powerfull = false
 local bloodmode = true
 local absorbing = false
 
-local orbfolder = Instance.new("Folder", workspace)
-local cor = Instance.new("ColorCorrectionEffect", lighting)
+local orbfolder = Instance.new("Folder")
+local cor = Instance.new("ColorCorrectionEffect")
+
+orbfolder.Parent = workspace
+cor.Parent = lighting
 
 local grabanim = Instance.new("Animation")
 	grabanim.AnimationId = "rbxassetid://2753391644"
@@ -70,29 +72,34 @@ local int = Instance.new("ScreenGui")
 	int.Parent = cgui
 
 -- sounds
-local grabsound = Instance.new("Sound", int)
+local grabsound = Instance.new("Sound")
 	grabsound.SoundId = "rbxassetid://5365129954"
 	grabsound.Volume = 2
+	grabsound.Parent = int
 
-local obtainsound = Instance.new("Sound", int)
+local obtainsound = Instance.new("Sound")
 	obtainsound.SoundId = "rbxassetid://6666257074"
 	obtainsound.Volume = 0.9
+	obtainsound.Parent = int
 
-local furysound = Instance.new("Sound", int)
+local furysound = Instance.new("Sound")
 	furysound.SoundId = "rbxassetid://6666350716"
 	furysound.Volume = 5.5
+	furysound.Parent = int
 
-local activesound = Instance.new("Sound", int)
+local activesound = Instance.new("Sound")
 	activesound.SoundId = "rbxassetid://288066605" -- old sound: 5912251061
 	activesound.Volume = 0
 	activesound.Looped = true
+	activesound.Parent = int
 
-local endsound = Instance.new("Sound", int)
+local endsound = Instance.new("Sound")
 	endsound.SoundId = "rbxassetid://5591296905"
 	endsound.Volume = 7.5
+	endsound.Parent = int
 
 -- ability circle
-local rad = Instance.new("ImageLabel", int)
+local rad = Instance.new("ImageLabel")
 	rad.AnchorPoint = Vector2.new(0.5, 0.5)
 	rad.BackgroundTransparency = 1
 	rad.BorderSizePixel = 0
@@ -101,12 +108,14 @@ local rad = Instance.new("ImageLabel", int)
 	rad.SizeConstraint = Enum.SizeConstraint.RelativeXX
 	rad.Image = "rbxassetid://6665182126"
 	rad.ImageTransparency = 0.4
+	rad.Parent = int
 
-local grad = Instance.new("UIGradient", rad)
+local grad = Instance.new("UIGradient")
 	grad.Rotation = 90
 	grad.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.new(1, 0, 0)), ColorSequenceKeypoint.new(0.001, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(1, 1, 1))}
+	grad.Parent = rad
 
-local label = Instance.new("TextLabel", rad)
+local label = Instance.new("TextLabel")
 	label.AnchorPoint = Vector2.new(0.5, 0.5)
 	label.BackgroundTransparency = 1
 	label.BorderSizePixel = 0
@@ -117,8 +126,9 @@ local label = Instance.new("TextLabel", rad)
 	label.TextColor3 = Color3.fromRGB(255, 255, 255)
 	label.TextScaled = true
 	label.TextTransparency = 0.4
+	label.Parent = rad
 
-local keybind = Instance.new("TextLabel", int)
+local keybind = Instance.new("TextLabel")
 	keybind.AnchorPoint = Vector2.new(0.5, 1)
 	keybind.BackgroundTransparency = 1
 	keybind.BorderSizePixel = 0
@@ -129,6 +139,7 @@ local keybind = Instance.new("TextLabel", int)
 	keybind.TextColor3 = Color3.fromRGB(255, 255, 255)
 	keybind.TextTransparency = 0.5
 	keybind.TextScaled = true
+	keybind.Parent = int
 
 -- functions
 local function makeChainsawVisible(t)
