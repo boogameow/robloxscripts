@@ -49,6 +49,7 @@ local gens = workspace.MatchValues.GeneratorsRepaired
 local inps = game:GetService("UserInputService")
 local r = game:GetService("ReplicatedStorage")
     local rems = r.RemoteEvents
+    local kstuff = r.KillerStuff
     local upd = rems.PropertieUpdater
     local mat = r.Match
 
@@ -221,6 +222,15 @@ local codes = {
             end 
         end
     end, "Reset all pallets."};
+    [Enum.KeyCode.Y] = {function()
+        local ismyers = c:FindFirstChild("Shape")
+
+        if not ismyers then
+            kstuff.Shape:Clone().Parent = c 
+        else 
+            ismyers:Destroy()
+        end
+    end, "Toggle myers."};
 }
 
 -- create guis
