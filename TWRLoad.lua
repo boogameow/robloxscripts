@@ -12,6 +12,7 @@ local stuff = rep:WaitForChild("Game Stuff")
     local wave = stuff:WaitForChild("Wave")
 
 local servers = tp:GetTeleportSetting("servers")
+local count = tp:GetTeleportSetting("tpcount")
 
 local function url(cursor)
     return string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100&cursor=%s", game.PlaceId, cursor)
@@ -36,6 +37,12 @@ local function check()
             cursor = t["nextPageCursor"]
         end
     end
+
+    if not count then
+        count = 0
+    else
+        count += 1
+    end
 end
 
 local function dotp()
@@ -45,13 +52,14 @@ local function dotp()
     table.remove(servers, #servers)
 
 	tp:SetTeleportSetting("servers", servers)
+    tp:SetTeleportSetting("tpcount", count)
     tp:TeleportToPlaceInstance(game.PlaceId, nextserver)
 end
 
 tp.TeleportInitFailed:Connect(dotp)
 
 if wave.Value < minwave or wave.Value == 15 then
-    rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId .. " | NOT ELIGIBILE")
+    rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId .. " | NOT ELIGIBILE | COUNT: " .. count)
     delay(5, dotp)
 else 
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId .. " | ELIGIBILE")
@@ -59,9 +67,10 @@ else
     delay(10, function()
         rconsoleprint("\nPress any key to continue..")
         rconsoleinput()
-        rconsoleclear()
 
         servers = nil
+        count = nil
+        rconsoleclear()
         dotp()
     end)
 end
