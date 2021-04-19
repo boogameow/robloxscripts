@@ -26,7 +26,9 @@ local function check()
             local t = http:JSONDecode(game:HttpGet(url(cursor)))
 
             for i, v in ipairs(t.data) do
-                table.insert(servers, v.id)
+                if v.id ~= game.JobId then
+                    table.insert(servers, v.id)
+                end
            	end
 
             if not t["nextPageCursor"] or t["nextPageCursor"] == cursor then
