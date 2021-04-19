@@ -57,4 +57,11 @@ if wave.Value < minwave or wave.Value == 15 then
     end)
 else 
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | ELIGIBILE")
+
+    local outcome = messagebox("Continue Hopping?", "TWR Hopper", 1)
+
+    if outcome == 1 then
+        tp.TeleportInitFailed:Connect(dotp)
+        dotp()
+    end
 end
