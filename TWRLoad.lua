@@ -59,6 +59,8 @@ else
     delay(10, function()
         rconsoleprint("\nPress any key to continue..")
         rconsoleinput()
+        
+        servers = nil
         dotp()
     end)
 end
