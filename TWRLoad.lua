@@ -46,12 +46,12 @@ local function dotp()
 end
 
 if wave.Value < minwave then
-	rconsoleprint("WAVE: " .. tostring(wave.Value) .. " | NOT ELGIBILE")
+	rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | NOT ELGIBILE")
 
 	tp.TeleportInitFailed:Connect(dotp)
 	dotp()
 else 
-	rconsoleprint("WAVE: " .. tostring(wave.Value) .. " | ELGIBILE")
+	rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | ELGIBILE")
 
     delay(3, function()
         rconsoleclear()
