@@ -51,7 +51,7 @@ local function dotp()
 end
 
 tp.TeleportInitFailed:Connect(dotp)
-rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId)
+rconsoleprint("SERVER: " .. game.JobId .. " | MAP: " .. map.Value .. " | WAVE: " .. tostring(wave.Value))
 
 if wave.Value < minwave or wave.Value == 15 then
     delay(5, dotp)
