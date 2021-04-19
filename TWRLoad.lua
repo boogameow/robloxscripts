@@ -59,7 +59,7 @@ else
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId .. " | ELIGIBILE")
 
     delay(10, function()
-        rconsoleprint("\nPress any key to continue..")
+        rconsoleprint("\nPress enter to continue..")
         rconsoleinput()
 
         servers = nil
