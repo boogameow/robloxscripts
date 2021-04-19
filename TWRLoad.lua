@@ -51,16 +51,17 @@ end
 if wave.Value < minwave or wave.Value == 15 then
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | NOT ELIGIBILE")
 
-    delay(4, function()
+    delay(5, function()
         tp.TeleportInitFailed:Connect(dotp)
         dotp()
     end)
 else 
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | ELIGIBILE")
+    rconsoleprint("Continue Hopping? [Y / N]")
 
-    local outcome = messagebox("Continue Hopping?", "TWR Hopper", 1)
+    local inp = rconsoleinput()
 
-    if outcome == 1 then
+    if string.lower(inp) == "y" then
         tp.TeleportInitFailed:Connect(dotp)
         dotp()
     end
