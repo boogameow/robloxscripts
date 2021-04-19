@@ -48,8 +48,8 @@ local function dotp()
     tp:TeleportToPlaceInstance(game.PlaceId, nextserver)
 end
 
-delay(8, function()
-    if wave.Value < minwave then
+delay(5, function()
+    if wave.Value < minwave or wave.Value == 15 then
         rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | NOT ELGIBILE")
 
         tp.TeleportInitFailed:Connect(dotp)
