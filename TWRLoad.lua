@@ -51,7 +51,7 @@ end
 tp.TeleportInitFailed:Connect(dotp)
 
 if wave.Value < minwave or wave.Value == 15 then
-    rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | SERVER: " .. game.JobId .. " | NOT ELIGIBILE")
+    rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId .. " | NOT ELIGIBILE")
     delay(5, dotp)
 else 
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId .. " | ELIGIBILE")
