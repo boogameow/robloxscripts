@@ -59,7 +59,7 @@ else
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | ELIGIBILE")
 
     delay(10, function()
-        rconsoleprint("Continue Hopping? [Y / N]")
+        rconsoleprint("\nContinue Hopping? [Y / N]")
 
         local inp = rconsoleinput()
 
