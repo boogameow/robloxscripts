@@ -56,7 +56,7 @@ rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. "
 if wave.Value < minwave or wave.Value == 15 then
     delay(5, dotp)
 else 
-    rconsoleprint("\nSERVER IS ELIGIBLE. Press enter to continue..")
+    rconsoleprint("\nSERVER IS ELIGIBLE. Press enter to restart search..")
     rconsoleinput()
 
     servers = nil
