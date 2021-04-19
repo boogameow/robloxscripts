@@ -4,9 +4,12 @@ rconsolename("TWR Hopper")
 local minwave = 10
 
 local tp = game:GetService("TeleportService")
-local rep = game:GetService("ReplicatedStorage")
-local wave = rep:WaitForChild("Game Stuff"):WaitForChild("Wave")
 local http = game:GetService("HttpService")
+local rep = game:GetService("ReplicatedStorage")
+
+local stuff = rep:WaitForChild("Game Stuff")
+    local map = stuff:WaitForChild("MapName")
+    local wave = stuff:WaitForChild("Wave")
 
 local servers = tp:GetTeleportSetting("servers")
 
@@ -55,5 +58,5 @@ if wave.Value < minwave then
 	tp.TeleportInitFailed:Connect(dotp)
 	dotp()
 else 
-	rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | ELGIBILE")
+	rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | ELGIBILE")
 end
