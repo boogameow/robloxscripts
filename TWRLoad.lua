@@ -51,7 +51,7 @@ end
 if wave.Value < minwave or wave.Value == 15 then
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | NOT ELIGIBILE")
 
-    delay(5, function()
+    delay(3, function()
         tp.TeleportInitFailed:Connect(dotp)
         dotp()
     end)
