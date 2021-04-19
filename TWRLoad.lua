@@ -51,12 +51,11 @@ local function dotp()
 end
 
 tp.TeleportInitFailed:Connect(dotp)
+rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId)
 
 if wave.Value < minwave or wave.Value == 15 then
-    rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId)
     delay(5, dotp)
 else 
-    rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | SERVER: " .. game.JobId)
     rconsoleprint("\nSERVER IS ELIGIBLE")
 
     delay(10, function()
