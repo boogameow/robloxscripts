@@ -52,4 +52,8 @@ if wave.Value < minwave then
 	dotp()
 else 
 	rconsoleprint("WAVE: " .. tostring(wave.Value) .. " | ELGIBILE")
+
+    delay(3, function()
+        rconsoleclear()
+    end)
 end
