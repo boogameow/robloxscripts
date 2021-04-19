@@ -59,13 +59,10 @@ else
     rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | ELIGIBILE")
 
     delay(10, function()
-        rconsoleprint("\nContinue Hopping? [Y / N]")
+        rconsoleprint("\nPress any key to continue..")
+        rconsoleinput()
 
-        local inp = rconsoleinput()
-
-        if string.lower(inp) == "y" then
-            tp.TeleportInitFailed:Connect(dotp)
-            dotp()
-        end
+        tp.TeleportInitFailed:Connect(dotp)
+        dotp()
     end)
 end
