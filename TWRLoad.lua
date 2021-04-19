@@ -48,15 +48,13 @@ local function dotp()
     tp:TeleportToPlaceInstance(game.PlaceId, nextserver)
 end
 
-if not game:IsLoaded() then
-    game.Loaded:Wait()
-end
+delay(5, function()
+    if wave.Value < minwave then
+        rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | NOT ELGIBILE")
 
-if wave.Value < minwave then
-	rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | NOT ELGIBILE")
-
-	tp.TeleportInitFailed:Connect(dotp)
-	dotp()
-else 
-	rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | ELGIBILE")
-end
+        tp.TeleportInitFailed:Connect(dotp)
+        dotp()
+    else 
+        rconsoleprint("\nWAVE: " .. tostring(wave.Value) .. " | MAP: " .. map.Value .. " | ELGIBILE")
+    end
+end)
