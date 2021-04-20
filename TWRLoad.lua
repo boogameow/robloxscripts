@@ -2,6 +2,7 @@ syn.queue_on_teleport(readfile("twrauto.lua"))
 rconsolename("TWR Hopper")
 
 local minwave = 10
+local tping = false
 
 local tp = game:GetService("TeleportService")
 local http = game:GetService("HttpService")
@@ -41,6 +42,11 @@ local function check()
 end
 
 local function dotp()
+    if tping == true then
+        return
+    end
+
+    tping = true
 	check()
 
 	local nextserver = servers[#servers]
