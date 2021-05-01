@@ -7,5 +7,5 @@ Loadstring:
 local branch = "dbr" -- master = random scripts, dbr = dead by roblox scripts.
 local scriptname = "Oni" -- name of the script, EXCLUDE FILE TYPE.
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/boogameow/scripts/' .. branch .. '/' .. scriptname .. '.lua'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/boogameow/newscripts/' .. branch .. '/' .. scriptname .. '.lua'))()
 ```
