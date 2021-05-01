@@ -125,11 +125,13 @@ local states = {
 }
 
 
-local gui = Instance.new("ScreenGui", pl.PlayerGui)
+local gui = Instance.new("ScreenGui")
+	syn.protect_gui(gui)
 	gui.Name = "DBD"
 	gui.ResetOnSpawn = false
+	gui.Parent = game:GetService("CoreGui")
 
-local version = Instance.new("TextLabel", gui)
+local version = Instance.new("TextLabel")
 	version.Name = "Version"
 	version.AnchorPoint = Vector2.new(0, 1)
 	version.BackgroundTransparency = 1
@@ -144,28 +146,33 @@ local version = Instance.new("TextLabel", gui)
 	version.TextXAlignment = Enum.TextXAlignment.Left
 	version.TextYAlignment = Enum.TextYAlignment.Bottom
 	version.ZIndex = 10
+	version.Parent = gui
 
-local chasemusic = Instance.new("Sound", gui)
+local chasemusic = Instance.new("Sound")
 	chasemusic.Name = "Chase"
 	chasemusic.Volume = 0
 	chasemusic.Looped = true
 	chasemusic.Playing = true
 	chasemusic.SoundId = musics[math.random(1, #musics)]
+	chasemusic.Parent = gui
 
-local gensound = Instance.new("Sound", gui)
+local gensound = Instance.new("Sound")
 	gensound.Name = "Generator"
 	gensound.Volume = .8
 	gensound.SoundId = "rbxassetid://6183313125"
+	gensound.Parent = gui
 
-local foundsound = Instance.new("Sound", gui)
+local foundsound = Instance.new("Sound")
 	foundsound.Name = "Obsession_Found"
 	foundsound.Volume = 1
 	foundsound.SoundId = "rbxassetid://6197939321"
+	foundsound.Parent = gui
 
-local death = Instance.new("Sound", gui)
+local death = Instance.new("Sound")
 	death.Name = "Disconnect"
 	death.Volume = 1
 	death.SoundId = "rbxassetid://6187279552"
+	death.Parent = gui
 
 local rushvelocity = Instance.new("BodyVelocity")
 	rushvelocity.MaxForce = Vector3.new(100000, 0, 100000)
@@ -192,7 +199,7 @@ local award = Instance.new("ImageLabel")
 	award.ImageTransparency = 1
 	award.Image = "rbxassetid://6100256142"
 
-local image = Instance.new("ImageLabel", award)
+local image = Instance.new("ImageLabel")
 	image.Name = "Category"
 	image.AnchorPoint = Vector2.new(0.5, 0.5)
 	image.BackgroundTransparency = 1
@@ -201,8 +208,9 @@ local image = Instance.new("ImageLabel", award)
 	image.Position = UDim2.new(0.5, 0, 0.5, 0)
 	image.Size = UDim2.new(0.75, 0, 0.75, 0)
 	image.Image = "rbxassetid://6100699948"
+	image.Parent = award
 
-local action = Instance.new("TextLabel", award)
+local action = Instance.new("TextLabel")
 	action.Name = "Action"
 	action.BackgroundTransparency = 1
 	action.BorderSizePixel = 0
@@ -214,6 +222,7 @@ local action = Instance.new("TextLabel", award)
 	action.TextColor3 = Color3.fromRGB(255, 255, 255)
 	action.TextScaled = true
 	action.TextXAlignment = Enum.TextXAlignment.Left
+	action.Parent = award
 
 local bp = action:Clone()
 	bp.Name = "BP"
@@ -225,13 +234,14 @@ local bp = action:Clone()
 	bp.TextTransparency = 1
 	bp.TextColor3 = Color3.fromRGB(255, 0, 0)
 
-local grad = Instance.new("UIGradient", award)
+local grad = Instance.new("UIGradient")
 	grad.Name = "Grad"
 	grad.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
 	grad.Rotation = -90
+	grad.Parent = award
 
 -- match stuff
-local status = Instance.new("TextLabel", gui)
+local status = Instance.new("TextLabel")
 	status.Name = "Status"
 	status.AnchorPoint = Vector2.new(0.5, 0)
 	status.BackgroundTransparency = 1
@@ -243,31 +253,35 @@ local status = Instance.new("TextLabel", gui)
 	status.TextScaled = true
 	status.TextTransparency = 0.2
 	status.TextColor3 = Color3.fromRGB(255, 255, 255)
+	status.Parent = gui
 
-local match = Instance.new("Frame", gui)
+local match = Instance.new("Frame")
 	match.Name = "Game"
 	match.BorderSizePixel = 0
 	match.BackgroundTransparency = 1
 	match.Size = UDim2.new(1, 0, 1, 0)
 	match.Visible = false
+	match.Parent = gui
 
-local matchdivider = Instance.new("Frame", match)
+local matchdivider = Instance.new("Frame")
 	matchdivider.Name = "Divider"
 	matchdivider.AnchorPoint = Vector2.new(0, 1)
 	matchdivider.BackgroundTransparency = 0.5
 	matchdivider.BorderSizePixel = 0
 	matchdivider.Position = UDim2.new(0.02, 0, 0.89, 0)
 	matchdivider.Size = UDim2.new(0.165, 0, 0.005, 0)
+	matchdivider.Parent = match
 
 local last = NumberSequenceKeypoint.new(1, 0.9)
 local middle = NumberSequenceKeypoint.new(0.5, 0.25)
 local start = NumberSequenceKeypoint.new(0, 0.9)
 
-local dividgrad = Instance.new("UIGradient", matchdivider)
+local dividgrad = Instance.new("UIGradient")
 	dividgrad.Name = "Grad"
 	dividgrad.Transparency = NumberSequence.new({start, middle, last})
+	dividgrad.Parent = matchdivider
 
-local genimage = Instance.new("ImageLabel", matchdivider)
+local genimage = Instance.new("ImageLabel")
 	genimage.Name = "Image"
 	genimage.BackgroundTransparency = 1
 	genimage.BorderSizePixel = 0
@@ -275,8 +289,9 @@ local genimage = Instance.new("ImageLabel", matchdivider)
 	genimage.Size = UDim2.new(0.18, 0, 9, 0)
 	genimage.Image = "rbxassetid://6183021590"
 	genimage.ImageTransparency = 0.5
+	genimage.Parent = matchdivider
 
-local gentext = Instance.new("TextLabel", matchdivider)
+local gentext = Instance.new("TextLabel")
 	gentext.Name = "Gens"
 	gentext.BackgroundTransparency = 1
 	gentext.BorderSizePixel = 0
@@ -288,6 +303,7 @@ local gentext = Instance.new("TextLabel", matchdivider)
 	gentext.TextTransparency = 0.5
 	gentext.TextXAlignment = Enum.TextXAlignment.Left
 	gentext.TextColor3 = Color3.fromRGB(255, 255, 255)
+	gentext.Parent = matchdivider
 
 local powerimage = genimage:Clone()
 	powerimage.Parent = matchdivider
@@ -300,7 +316,7 @@ local powerimage = genimage:Clone()
 	powerimage.Image = "rbxassetid://6202275196"
 	powerimage.ImageTransparency = 0
 
-local powertokens = Instance.new("TextLabel", powerimage)
+local powertokens = Instance.new("TextLabel")
 	powertokens.Name = "Tokens"
 	powertokens.BackgroundTransparency = 1
 	powertokens.BorderSizePixel = 0
@@ -312,19 +328,22 @@ local powertokens = Instance.new("TextLabel", powerimage)
 	powertokens.TextScaled = true
 	powertokens.TextXAlignment = Enum.TextXAlignment.Left
 	powertokens.TextYAlignment = Enum.TextYAlignment.Bottom
+	powertokens.Parent = powerimage
 
-local players = Instance.new("Frame", match)
+local players = Instance.new("Frame")
 	players.Name = "Players"
 	players.AnchorPoint = Vector2.new(0, 1)
 	players.BackgroundTransparency = 1
 	players.BorderSizePixel = 0
 	players.Position = UDim2.new(0.03, 0, 0.95, 0)
 	players.Size = UDim2.new(0.13, 0, 0.05, 0)
+	players.Parent = match
 
-local list = Instance.new("UIListLayout", players)
+local list = Instance.new("UIListLayout")
 	list.Name = "List"
 	list.FillDirection = Enum.FillDirection.Horizontal
 	list.Padding = UDim.new(0.09, 0)
+	list.Parent = players
 
 local example = Instance.new("ImageLabel")
 	example.Name = "User"
@@ -335,7 +354,7 @@ local example = Instance.new("ImageLabel")
 	example.Image = states["Healthy"]
 	example.ImageTransparency = 0.6
 
-local hp = Instance.new("Frame", example)
+local hp = Instance.new("Frame")
 	hp.Name = "Health"
 	hp.AnchorPoint = Vector2.new(0, 0)
 	hp.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
@@ -344,16 +363,18 @@ local hp = Instance.new("Frame", example)
 	hp.Position = UDim2.new(0, 0, 1.3, 0)
 	hp.Size = UDim2.new(1, 0, 0.08, 0)
 	hp.Visible = false
+	hp.Parent = example
 
 local last = NumberSequenceKeypoint.new(1, 0)
 local middle = NumberSequenceKeypoint.new(0.25, 0.45)
 local start = NumberSequenceKeypoint.new(0, 0.9)
 
-local hpgrad = Instance.new("UIGradient", hp)
+local hpgrad = Instance.new("UIGradient")
 	hpgrad.Name = "Grad"
 	hpgrad.Transparency = NumberSequence.new({start, middle, last})
+	hpgrad.Parent = hp
 
-local plrname = Instance.new("TextLabel", example)
+local plrname = Instance.new("TextLabel")
 	plrname.Name = "User"
 	plrname.AnchorPoint = Vector2.new(0.5, 0)
 	plrname.BackgroundTransparency = 1
@@ -366,14 +387,16 @@ local plrname = Instance.new("TextLabel", example)
 	plrname.TextScaled = true
 	plrname.TextTransparency = 0.6
 	plrname.TextColor3 = Color3.fromRGB(255, 255, 255)
+	plrname.Parent = example
 
-local extangles = Instance.new("Frame", example)
+local extangles = Instance.new("Frame")
 	extangles.Name = "Tangles"
 	extangles.BackgroundTransparency = 1
 	extangles.BorderSizePixel = 0
 	extangles.Size = UDim2.new(1, 0, 1, 0)
+	extangles.PaRENT = example
 
-local leftangle = Instance.new("ImageLabel", extangles)
+local leftangle = Instance.new("ImageLabel")
 	leftangle.Name = "Left"
 	leftangle.AnchorPoint = Vector2.new(0, 1)
 	leftangle.BackgroundTransparency = 1
@@ -382,8 +405,9 @@ local leftangle = Instance.new("ImageLabel", extangles)
 	leftangle.Size = UDim2.new(0.34, 0, 0.45, 0)
 	leftangle.Image = "rbxassetid://6192303297"
 	leftangle.ImageTransparency = 0.6
+	leftangle.Parent = extangles
 
-local toptangle = Instance.new("ImageLabel", leftangle)
+local toptangle = Instance.new("ImageLabel")
 	toptangle.Name = "Top"
 	toptangle.BackgroundTransparency = 1
 	toptangle.BorderSizePixel = 0
@@ -391,6 +415,7 @@ local toptangle = Instance.new("ImageLabel", leftangle)
 	toptangle.Size = UDim2.new(1.3, 0, -1.25, 0)
 	toptangle.Image = "rbxassetid://6192632052"
 	toptangle.ImageTransparency = 0.6
+	toptangle.Parent = leftangle
 
 local rightangle = leftangle:Clone()
 	rightangle.Parent = extangles
@@ -403,14 +428,15 @@ local rightangle = leftangle:Clone()
 	rightangle.Top.Image = "rbxassetid://6192460346"
 
 -- post game
-local container = Instance.new("Frame", gui)
+local container = Instance.new("Frame")
 	container.Name = "Post"
 	container.BackgroundTransparency = 1
 	container.BorderSizePixel = 0
 	container.Size = UDim2.new(1, 0, 1, 0)
 	container.Visible = false
+	container.Parent = gui
 
-local label = Instance.new("TextLabel", container)
+local label = Instance.new("TextLabel")
 	label.Name = "Label"
 	label.AnchorPoint = Vector2.new(0.5, 1)
 	label.BackgroundTransparency = 1
@@ -421,10 +447,10 @@ local label = Instance.new("TextLabel", container)
 	label.Text = "RESULTS"
 	label.TextColor3 = Color3.fromRGB(255, 255, 255)
 	label.TextScaled = true
-
+	label.Parent = container
 
 -- template
-local boldness = Instance.new("ImageLabel", container)
+local boldness = Instance.new("ImageLabel")
 	boldness.Name = "Boldness"
 	boldness.AnchorPoint = Vector2.new(0.5, 1)
 	boldness.BackgroundTransparency = 1
@@ -434,8 +460,9 @@ local boldness = Instance.new("ImageLabel", container)
 	boldness.SizeConstraint = Enum.SizeConstraint.RelativeXX
 	boldness.ZIndex = 2
 	boldness.Image = "rbxassetid://6100256142"
+	boldness.Parent = container
 
-local amount = Instance.new("TextLabel", boldness)
+local amount = Instance.new("TextLabel")
 	amount.Name = "Amount"
 	amount.AnchorPoint = Vector2.new(0.5, 0)
 	amount.BackgroundTransparency = 1
@@ -446,8 +473,9 @@ local amount = Instance.new("TextLabel", boldness)
 	amount.Text = "+0"
 	amount.TextColor3 = Color3.fromRGB(255, 0, 0)
 	amount.TextScaled = true
+	amount.Parent = boldness
 
-local insideimage = Instance.new("ImageLabel", boldness)
+local insideimage = Instance.new("ImageLabel")
 	insideimage.Name = "Inside"
 	insideimage.AnchorPoint = Vector2.new(0.5, 0.5)
 	insideimage.BackgroundTransparency = 1
@@ -455,6 +483,7 @@ local insideimage = Instance.new("ImageLabel", boldness)
 	insideimage.Position = UDim2.new(0.5, 0, 0.5, 0)
 	insideimage.Size = UDim2.new(0.75, 0, 0.7, 0)
 	insideimage.Image = categories["Boldness"][2]
+	insideimage.Parent = boldness
 
 grad:Clone().Parent = boldness
 -- end of template
@@ -476,7 +505,6 @@ local altruism = boldness:Clone()
 	altruism.Position = UDim2.new(0.59, 0, 0.96, 0)
 	altruism.Inside.Image = categories["Altruism"][2]
 	altruism.Parent = container
-
 
 
 local posts = {
@@ -1399,5 +1427,5 @@ timeleft.Changed:Connect(function()
 end)
 
 
-version.Text = "DBD Tweaks v32"
+version.Text = "DBD Tweaks v32.1"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
