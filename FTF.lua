@@ -778,7 +778,7 @@ local function attemptchase()
 				local beasthead = beast.Character.Head
 				local survhead = v.Character.Head
 
-				local mag = (beasthead.Position - beasthead.Position).magnitude
+				local mag = (beasthead.Position - survhead.Position).magnitude
 				local dot = beasthead.CFrame.LookVector:Dot(survhead.Position - beasthead.Position)
 
 				local params = RaycastParams.new()
